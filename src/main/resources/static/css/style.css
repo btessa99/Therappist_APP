@@ -1,0 +1,16 @@
+body {
+    background-color: lightgoldenrodyellow;
+    font-family: Avenir, serif;
+}
+
+
+h1 {
+    color: peru;
+    margin-top: 50px;
+    text-align: center;
+    font-size: 60px;
+}
+
+#error-field{
+    color: firebrick;
+}
