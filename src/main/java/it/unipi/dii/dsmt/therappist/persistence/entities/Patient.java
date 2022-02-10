@@ -15,7 +15,7 @@ public class Patient implements Serializable {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "fullName")
+    @Column(name = "full_name")
     private String fullName;
 
     @Column(name = "email")
@@ -24,7 +24,7 @@ public class Patient implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "dateOfBirth")
+    @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
     @Column(name = "issue")

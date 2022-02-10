@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 
 
 @Controller
@@ -51,10 +52,9 @@ public class LoginController {
 
         if(role.equals("Patient")){
             PatientDTO logged = (PatientDTO) user;
-
-            if(logged.getTherapist() == null)
-                return "redirect:/patient-page"; // the patient needs to look for a therapist
-            
+            if(logged.getTherapist() == null) {
+                return "redirect:/search-page"; // the patient needs to look for a therapist
+            }
             return "redirect:/patient-page"; //the patient has been assigned to a therapist
                 
                 

@@ -10,10 +10,12 @@
 <form method="post">
     <label>First Name:  <input type="text" name="first_name" required/> </label><br>
     <label>Last Name: <input type="text" name="last_name" required/></label> <br>
+    <label>Date of birth: <input type="date" name="date_of_birth" required/></label>
     <label>Email: <input type="text" name="email" required/></label>  <br>
     <label>Username: <input type="text" name="username" required/></label>  <br>
     <label>Password: <input type="password" name="pass" required/> </label> <br>
     <label>Confirm Password:  <input type="password" name="pass_confirm" required/> </label><br>
+
 
 <br>
     <label for="fields-select">You need help with:</label>

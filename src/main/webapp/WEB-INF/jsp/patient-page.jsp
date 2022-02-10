@@ -4,7 +4,7 @@
 </head>
 <body>
 
-<p>Hello ${user.fullName}</p>
+<p>Hello ${user.fullName}  ${user.therapist}</p>
 
 <form action="patient-page" method="get">
     <input type = "submit" value="submit">

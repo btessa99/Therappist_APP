@@ -12,6 +12,8 @@ public class TherapistDTO extends UserDTO implements Serializable {
     private String specialization3;
     private String gender;
     private String biography;
+    private int maxPatients;
+    private int acceptedPatients;
 
     public TherapistDTO(String fullName, String username, String email, String password, Date dateOfBirth, int available, String state, String specialization1, String specialization2, String specialization3, String gender, String biography) {
         super(fullName, username, email, password, dateOfBirth);
@@ -82,5 +84,21 @@ public class TherapistDTO extends UserDTO implements Serializable {
 
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    public int getMaxPatients() {
+        return maxPatients;
+    }
+
+    public void setMaxPatients(int maxPatients) {
+        this.maxPatients = maxPatients;
+    }
+
+    public int getAcceptedPatients() {
+        return acceptedPatients;
+    }
+
+    public void setAcceptedPatients(int acceptedPatients) {
+        this.acceptedPatients = acceptedPatients;
     }
 }

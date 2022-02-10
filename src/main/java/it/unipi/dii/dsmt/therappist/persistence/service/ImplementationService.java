@@ -51,6 +51,8 @@ public class ImplementationService {
         therapist.setState(input.getState());
         therapist.setBiography(input.getBiography());
         therapist.setGender(input.getGender());
+        therapist.setMaxPatients(input.getMaxPatients());
+        therapist.setAcceptedPatients(input.getAcceptedPatients());
         return therapist;
     }
 
@@ -69,6 +71,8 @@ public class ImplementationService {
         therapist.setState(input.getState());
         therapist.setBiography(input.getBiography());
         therapist.setGender(input.getGender());
+        therapist.setMaxPatients(input.getMaxPatients());
+        therapist.setAcceptedPatients(input.getAcceptedPatients());
         return therapist;
     }
 }

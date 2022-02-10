@@ -15,7 +15,7 @@ public class Therapist implements Serializable {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "fullName")
+    @Column(name = "full_name")
     private String fullName;
 
     @Column(name = "email")
@@ -24,19 +24,19 @@ public class Therapist implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "spacialization1")
+    @Column(name = "specialization1")
     private String specialization1;
 
-    @Column(name = "spacialization2")
+    @Column(name = "specialization2")
     private String specialization2;
 
-    @Column(name = "spacialization3")
+    @Column(name = "specialization3")
     private String specialization3;
 
     @Column(name = "state")
     private String state;
 
-    @Column(name = "dateOfBirth")
+    @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
     @Column(name = "gender")
@@ -45,18 +45,13 @@ public class Therapist implements Serializable {
     @Column(name = "biography")
     private String biography;
 
-    public Therapist(){}
+    @Column(name = "max_patients")
+    private int maxPatients;
 
-    public Therapist(String username, String fullName, String email, String password, String specialization1, String specialization2, String specialization3, String state) {
-        this.username = username;
-        this.fullName = fullName;
-        this.email = email;
-        this.password = password;
-        this.specialization1 = specialization1;
-        this.specialization2 = specialization2;
-        this.specialization3 = specialization3;
-        this.state = state;
-    }
+    @Column(name = "accepted_patients")
+    private int acceptedPatients;
+
+    public Therapist(){}
 
     public String getUsername() {
         return username;
@@ -144,5 +139,21 @@ public class Therapist implements Serializable {
 
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    public int getMaxPatients() {
+        return maxPatients;
+    }
+
+    public void setMaxPatients(int maxPatients) {
+        this.maxPatients = maxPatients;
+    }
+
+    public int getAcceptedPatients() {
+        return acceptedPatients;
+    }
+
+    public void setAcceptedPatients(int acceptedPatients) {
+        this.acceptedPatients = acceptedPatients;
     }
 }
