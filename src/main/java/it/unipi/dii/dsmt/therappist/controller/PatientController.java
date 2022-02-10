@@ -38,4 +38,6 @@ public class PatientController {
 
         return "patient-page";
     }
+
+
 }

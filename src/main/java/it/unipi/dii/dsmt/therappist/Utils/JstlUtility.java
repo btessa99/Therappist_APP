@@ -1,4 +1,4 @@
-package it.unipi.dii.dsmt.therappist.jstlUtility;
+package it.unipi.dii.dsmt.therappist.Utils;
 
 import it.unipi.dii.dsmt.therappist.dto.TherapistDTO;
 import it.unipi.dii.dsmt.therappist.service.SearchService;

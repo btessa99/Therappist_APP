@@ -7,10 +7,11 @@
 <body>
 <h1>SIGN IN</h1>
 
+<p id="error-field">${errorMessage}</p>
+
 <form method="post">
-    <label>First Name:  <input type="text" name="first_name" required/> </label><br>
-    <label>Last Name: <input type="text" name="last_name" required/></label> <br>
-    <label>Date of birth: <input type="date" name="date_of_birth" required/></label>
+    <label>Full Name:  <input type="text" name="full_name" required/> </label><br>
+    <label>Date of birth: <input type="date" name="date_of_birth" required/></label><br>
     <label>Email: <input type="text" name="email" required/></label>  <br>
     <label>Username: <input type="text" name="username" required/></label>  <br>
     <label>Password: <input type="password" name="pass" required/> </label> <br>

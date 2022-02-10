@@ -3,6 +3,9 @@ body {
     font-family: Avenir, serif;
 }
 
+a{
+    color: goldenrod;
+}
 
 h1 {
     color: peru;
@@ -13,4 +16,8 @@ h1 {
 
 #error-field{
     color: firebrick;
+}
+
+.hidden{
+    visibility: hidden;
 }

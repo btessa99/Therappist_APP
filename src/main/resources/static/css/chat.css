@@ -1,0 +1,35 @@
+body {
+    background-color: lightgoldenrodyellow;
+    font-family: Avenir, serif;
+}
+
+
+h3 {
+    color: lightgoldenrodyellow;
+    margin-top: 50px;
+    text-align: center;
+    font-size: 60px;
+}
+
+button{
+
+    background-color: peru;
+    border-radius: 15px;
+}
+
+#title{
+
+    background-color: peru;
+}
+
+#chat-holder{
+
+    border-color: peru;
+
+}
+
+#send{
+
+    position: relative;
+    bottom: 30px;
+}

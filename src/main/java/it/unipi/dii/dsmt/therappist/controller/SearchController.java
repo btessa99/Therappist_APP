@@ -8,11 +8,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.support.SessionAttributeStore;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+
 
 @Controller
 public class SearchController {
@@ -30,9 +31,24 @@ public class SearchController {
     }
 
     @PostMapping(value = "/search-page")
-    public String postPatient(SessionAttributeStore store, WebRequest request){
-        System.out.println("post");
+    //non so come faremo per mostrare le persone. Per ora ho fatto così.
+    //Era il modo più semplice e l'ho implementato. SUE ME!!!!
+    //Anyways kissini piccola fochetta
+    public String postPatient(HttpSession session, @RequestParam String therapist){
 
-        return "search-page";
+        System.out.println(therapist);
+        PatientDTO myself = (PatientDTO) session.getAttribute("user");
+        myself.setTherapist(therapist); // therapist no longer null
+
+        service.associateTherapist(myself); //save info to db
+
+        //decrement therapist availability
+        service.updateTherapist(therapist);
+
+        //update session user
+        session.removeAttribute("user");
+        session.setAttribute("user",myself);
+
+        return "redirect:/patient-page";
     }
 }

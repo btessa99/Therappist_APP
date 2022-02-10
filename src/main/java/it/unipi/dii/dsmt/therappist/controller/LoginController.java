@@ -1,5 +1,6 @@
 package it.unipi.dii.dsmt.therappist.controller;
 
+import it.unipi.dii.dsmt.therappist.Utils.SessionUtils;
 import it.unipi.dii.dsmt.therappist.dto.PatientDTO;
 import it.unipi.dii.dsmt.therappist.dto.TherapistDTO;
 import it.unipi.dii.dsmt.therappist.dto.UserDTO;
@@ -11,9 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 
 
 @Controller
@@ -24,8 +26,13 @@ public class LoginController {
     LoginService service;
 
     @GetMapping(value="/")
-    public String showLoginPage(ModelMap model){
+    public String showLoginPage(HttpSession session, SessionStatus status){
 
+        //SessionUtils.unsetSession(session);
+        status.setComplete(); //mi sa che serve questo per la sessione terminata bene sennò non va
+        session.invalidate();
+       // session.removeAttribute("user"); //when loggin out the user is redirect to this page
+                                            //so the session should be removed
         return "welcome-page";
     }
 
@@ -49,18 +56,24 @@ public class LoginController {
         }
 
         session.setAttribute("user",user);
+        //SessionUtils.setSession(session,user); vai a questa pagina per trovare i miei pensieri al riguardo
 
         if(role.equals("Patient")){
             PatientDTO logged = (PatientDTO) user;
-            if(logged.getTherapist() == null) {
+
+            if(logged.getTherapist() == null)
                 return "redirect:/search-page"; // the patient needs to look for a therapist
-            }
+            
             return "redirect:/patient-page"; //the patient has been assigned to a therapist
                 
                 
         }
         // the user credentials are valid and the user in question is a therapist
-        return "redirect:/therapist-page";
+        TherapistDTO loggedTherapist = (TherapistDTO) user;
+        if(loggedTherapist.getState().equals("pending")) //the therapist is yet to be admitted
+            return "waiting-page";
+
+        return "redirect:/therapist-page"; //the therapist can go to its personal page
 
     }
     

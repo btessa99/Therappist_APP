@@ -1,0 +1,36 @@
+body {
+    background-color: lightgoldenrodyellow;
+    font-family: Avenir, serif;
+}
+
+b{
+
+    font-size: 20px;
+}
+
+h1{
+    text-align: center;
+
+}
+
+#bigger{
+
+    font-size: 15px;
+
+}
+
+.color{
+    color: peru;
+}
+
+.info-therapist{
+
+    text-align: center;
+    border-top-color: peru;
+    border-bottom-color: peru ;
+}
+
+.submit{
+
+    border-radius: 15px;
+}

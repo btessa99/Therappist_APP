@@ -10,5 +10,5 @@ public interface PatientRepository extends CrudRepository<Patient, String> {
 
     Patient findByUsername(String Id);
     ArrayList<Patient> findByTherapist(String therapist);
-
+    Patient findByEmail(String email);
 }
