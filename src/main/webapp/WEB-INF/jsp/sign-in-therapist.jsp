@@ -27,7 +27,7 @@ we will contact you as soon as possible to schedule an interview</p>
     <br>
 
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/index.js"></script>
-    <label >You can choose up to three specialisation fields:</label><br>
+    <label >You can choose up to three specialization fields:</label><br>
 
         <input type="checkbox" id = "field1" name="field" value="Academic Issues" onchange="checkNumber(this)">
         <label for="field1"> Academic issues</label><br>
