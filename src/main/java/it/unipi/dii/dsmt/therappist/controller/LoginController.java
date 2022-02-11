@@ -1,6 +1,5 @@
 package it.unipi.dii.dsmt.therappist.controller;
 
-import it.unipi.dii.dsmt.therappist.Utils.SessionUtils;
 import it.unipi.dii.dsmt.therappist.dto.PatientDTO;
 import it.unipi.dii.dsmt.therappist.dto.TherapistDTO;
 import it.unipi.dii.dsmt.therappist.dto.UserDTO;
@@ -13,13 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpSession;
 
 
 @Controller
-@SessionAttributes("user")
+//@SessionAttributes("user")
 public class LoginController {
 
     @Autowired
@@ -27,12 +25,6 @@ public class LoginController {
 
     @GetMapping(value="/")
     public String showLoginPage(HttpSession session, SessionStatus status){
-
-        //SessionUtils.unsetSession(session);
-        status.setComplete(); //mi sa che serve questo per la sessione terminata bene sennò non va
-        session.invalidate();
-       // session.removeAttribute("user"); //when loggin out the user is redirect to this page
-                                            //so the session should be removed
         return "welcome-page";
     }
 
@@ -45,7 +37,8 @@ public class LoginController {
             user = service.getPatient(name);
         else
             user = service.getTherapist(name);
-        
+
+        //Error handling
         if(user == null){
             model.put("errorMessage", "Username not found");
             return "welcome-page";
@@ -55,8 +48,8 @@ public class LoginController {
             return "welcome-page";            
         }
 
+        //User found: login
         session.setAttribute("user",user);
-        //SessionUtils.setSession(session,user); vai a questa pagina per trovare i miei pensieri al riguardo
 
         if(role.equals("Patient")){
             PatientDTO logged = (PatientDTO) user;

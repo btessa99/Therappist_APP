@@ -7,7 +7,7 @@
 <body>
 
 <a href="change-credentials">Change your credentials</a> &nbsp;
-<a href="/">Logout</a>
+<a href="logout">Logout</a>
 
 <div id = "title">
     <h3>THERAPPIST CHAT</h3>

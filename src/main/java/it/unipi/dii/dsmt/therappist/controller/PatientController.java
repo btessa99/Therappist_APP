@@ -21,21 +21,15 @@ public class PatientController {
     @Autowired
     private PatientService service;
 
+    //First visit to the page: returns the jsp file
     @GetMapping(value = "/patient-page")
     public String getPatient(ModelMap model, HttpSession session){
-        System.out.println("get");
-        PatientDTO p = (PatientDTO) session.getAttribute("user");
-        if(p != null)
-            System.out.print(p.getFullName() + " is dealing with " + p.getIssue());
-        else
-            System.out.println("NULL");
+
         return "patient-page";
     }
 
     @PostMapping(value = "/patient-page")
     public String postPatient(SessionAttributeStore store, WebRequest request){
-        System.out.println("post");
-
         return "patient-page";
     }
 

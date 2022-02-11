@@ -39,6 +39,7 @@ public class SignInTherapistController {
                          @RequestParam Integer number,
                          @RequestParam("field") String[] fields){
 
+        //Username and email uniqueness check
         if(!service.checkUniqueUsername(username)){
 
             System.out.println("error");
@@ -53,6 +54,7 @@ public class SignInTherapistController {
             return "sign-in";
         }
 
+        //Insertion of the therapist in the DB
         TherapistDTO newTherapist = new TherapistDTO();
         newTherapist.setUsername(username);
         newTherapist.setPassword(pass);

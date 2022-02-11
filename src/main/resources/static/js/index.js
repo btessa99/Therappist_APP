@@ -1,15 +1,3 @@
-// $(document).ready(function () {
-//     $("input[name='field']").change(function () {
-//         var maxAllowed = 3;
-//         var cnt = $("input[name='field']:checked").length;
-//         alert("Cucu'")
-//         if (cnt > maxAllowed) {
-//             $(this).prop("checked", "");
-//             alert('You can select maximum ' + maxAllowed + ' technologies!!');
-//         }
-//     });
-// });
-
 counter = 0;
 const max = 3;
 

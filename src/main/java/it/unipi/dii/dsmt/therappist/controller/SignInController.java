@@ -39,6 +39,7 @@ public class SignInController {
                              @RequestParam String fields){
 
 
+        //Check if the username is already used for patients
         if(!service.checkUniqueUsername(username)){
 
             System.out.println("error");
@@ -46,6 +47,7 @@ public class SignInController {
             return "sign-in";
         }
 
+        //check if the email is already used for patients
         if(!service.checkUniqueEmail(email)){
 
             System.out.println("error mail ");
@@ -53,6 +55,13 @@ public class SignInController {
             return "sign-in";
         }
 
+        //Password and confirmation check
+        if(!pass.equals(pass_confirm)){
+            model.put("errorMessage","Password and confirmation don't match");
+            return "sign-in";
+        }
+
+        //Insertion of the new patient and login
         PatientDTO newPatient = new PatientDTO();
         newPatient.setFullName(full_name);
         newPatient.setEmail(email);

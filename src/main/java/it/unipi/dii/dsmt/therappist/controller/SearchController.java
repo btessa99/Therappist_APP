@@ -21,9 +21,9 @@ public class SearchController {
     @Autowired
     SearchService service;
 
+    //Set the suitable therapist for the patient's issue
     @GetMapping(value = "/search-page")
     public String getPatient(ModelMap model, HttpSession session){
-        model.addAttribute("controller", "search");
         PatientDTO patient = (PatientDTO) session.getAttribute("user");
         ArrayList<TherapistDTO> therapists = service.getAvailableTherapists(patient.getIssue());
         model.addAttribute("availableTherapists", therapists);
@@ -31,9 +31,6 @@ public class SearchController {
     }
 
     @PostMapping(value = "/search-page")
-    //non so come faremo per mostrare le persone. Per ora ho fatto così.
-    //Era il modo più semplice e l'ho implementato. SUE ME!!!!
-    //Anyways kissini piccola fochetta
     public String postPatient(HttpSession session, @RequestParam String therapist){
 
         System.out.println(therapist);
@@ -46,7 +43,6 @@ public class SearchController {
         service.updateTherapist(therapist);
 
         //update session user
-        session.removeAttribute("user");
         session.setAttribute("user",myself);
 
         return "redirect:/patient-page";
