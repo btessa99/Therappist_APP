@@ -35,7 +35,6 @@ public class SignInController {
                              @RequestParam String username,
                              @RequestParam String pass,
                              @RequestParam String date_of_birth,
-                             @RequestParam String pass_confirm,
                              @RequestParam String fields){
 
 
@@ -52,12 +51,6 @@ public class SignInController {
 
             System.out.println("error mail ");
             model.put("errorMessage","Email already in use");
-            return "sign-in";
-        }
-
-        //Password and confirmation check
-        if(!pass.equals(pass_confirm)){
-            model.put("errorMessage","Password and confirmation don't match");
             return "sign-in";
         }
 

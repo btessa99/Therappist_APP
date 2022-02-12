@@ -44,14 +44,14 @@ public class SignInTherapistController {
 
             System.out.println("error");
             model.put("errorMessage","Username already in use");
-            return "sign-in";
+            return "sign-in-therapist";
         }
 
         if(!service.checkUniqueEmail(email)){
 
             System.out.println("error mail ");
             model.put("errorMessage","Email already in use");
-            return "sign-in";
+            return "sign-in-therapist";
         }
 
         //Insertion of the therapist in the DB

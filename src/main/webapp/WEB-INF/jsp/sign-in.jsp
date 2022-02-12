@@ -3,25 +3,27 @@
 <html>
 <head>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css" />
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/controls.js"></script>
 </head>
-<body>
+<body onload="formCheck()">
 <h1>SIGN IN</h1>
 
 <p id="error-field">${errorMessage}</p>
 
-<form method="post">
+
+<form method="post" id="form">
     <label>Full Name:  <input type="text" name="full_name" required/> </label><br>
     <label>Date of birth: <input type="date" name="date_of_birth" required/></label><br>
-    <label>Email: <input type="text" name="email" required/></label>  <br>
+    <label>Email: <input type="text" name="email" required id="email"/></label>  <br>
     <label>Username: <input type="text" name="username" required/></label>  <br>
-    <label>Password: <input type="password" name="pass" required/> </label> <br>
-    <label>Confirm Password:  <input type="password" name="pass_confirm" required/> </label><br>
+    <label>Password: <input type="password" name="pass" required id="password"/> </label> <br>
+    <label>Confirm Password:  <input type="password" name="pass_confirm" id="confirmation"required/> </label><br>
 
 
 <br>
     <label for="fields-select">You need help with:</label>
 
-    <select name="fields" id="fields-select">
+    <select name="fields" id="fields-select" required>
         <option value=""> </option>
         <option value="Academic Issues">Academic Issues</option>
         <option value="Adoption">Adoption</option>

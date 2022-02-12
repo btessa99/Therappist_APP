@@ -3,23 +3,25 @@
 <html>
 <head>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css" />
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/controls.js"></script>
 </head>
-<body>
+<body onload="formCheck()">
 <h1>SIGN IN</h1>
 <p id="error-field">${errorMessage}</p>
 <p>Before accepting your request we have to make sure you have the right qualification. Compile this form and
 we will contact you as soon as possible to schedule an interview</p>
 
-<form method="post" >
+
+<form method="post" id="form">
     <label>First Name:  <input type="text" name="full_name" required/> </label><br>
     <label>Gender: <input type="text" name="gender" required/></label> <br>
     <label>Date of birth: <input type="date" name="date_of_birth" required/></label> <br>
-    <label>Email: <input type="text" name="email" required/></label>  <br>
+    <label>Email: <input type="text" name="email" id="email" required/></label>  <br>
     <label>Phone Number: <input type="text" name="phone_number" required/></label>  <br>
     <label>How would you introduce yourself to your patients? <input type="text" name="biography" required/></label>  <br>
     <label>Username:  <input type="text" name="username" required/> </label><br>
-    <label>Password: <input type="password" name="pass" required/> </label> <br>
-    <label>Confirm Password:  <input type="password" name="pass_confirm" required/> </label><br>
+    <label>Password: <input type="password" name="pass" id="password" required/> </label> <br>
+    <label>Confirm Password:  <input type="password" name="pass_confirm" id="confirmation" required/> </label><br>
     <br>
 
    <label>Choose the max number of patients you want to follow: <input type="number" name="number" min="1" max="5" value="1"> </label>
