@@ -1,13 +1,11 @@
 %%%-------------------------------------------------------------------
-%%% @author benedettatessa
-%%% @copyright (C) 2022, <COMPANY>
+%%% @copyright (C) 2022, TherAPPist
 %%% @doc
 %%%
 %%% @end
 %%% Created : 08. feb 2022 23:06
 %%%-------------------------------------------------------------------
--module(terappist_server).
--author("benedettatessa").
+-module(therappist_server).
 
 -behaviour(gen_server).
 
@@ -27,10 +25,11 @@
 %%%===================================================================
 
 %% @doc Spawns the server and registers the local name (unique)
--spec(start_link() ->
-  {ok, Pid :: pid()} | ignore | {error, Reason :: term()}).
-start_link() ->
-  gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+start() ->
+  gen_server:start({local, therappist_server}, ?MODULE, [], []).
+
+call_server(Content) ->
+  gen_server:call(therappist_server, Content).
 
 %%%===================================================================
 %%% gen_server callbacks
@@ -38,23 +37,16 @@ start_link() ->
 
 %% @private
 %% @doc Initializes the server
--spec(init(Args :: term()) ->
-  {ok, State :: #terappist_server_state{}} | {ok, State :: #terappist_server_state{}, timeout() | hibernate} |
-  {stop, Reason :: term()} | ignore).
-init([]) ->
-  {ok, #terappist_server_state{}}.
+
+init(_) ->
+  rabbitmq_client:start(),
+  {ok, {}}.
 
 %% @private
 %% @doc Handling call messages
--spec(handle_call(Request :: term(), From :: {pid(), Tag :: term()},
-    State :: #terappist_server_state{}) ->
-  {reply, Reply :: term(), NewState :: #terappist_server_state{}} |
-  {reply, Reply :: term(), NewState :: #terappist_server_state{}, timeout() | hibernate} |
-  {noreply, NewState :: #terappist_server_state{}} |
-  {noreply, NewState :: #terappist_server_state{}, timeout() | hibernate} |
-  {stop, Reason :: term(), Reply :: term(), NewState :: #terappist_server_state{}} |
-  {stop, Reason :: term(), NewState :: #terappist_server_state{}}).
-handle_call(_Request, _From, State = #terappist_server_state{}) ->
+
+handle_call({message, {Msg_Id, Sender, Receiver, Text}}, _From, _) ->
+
   {reply, ok, State}.
 
 %% @private
