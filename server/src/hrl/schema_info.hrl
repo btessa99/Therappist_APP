@@ -1,5 +1,4 @@
--record(messages, {id,
-                  timestamp,
+-record(messages, {timestamp,
                   sender,
                   receiver,
                   text}).
