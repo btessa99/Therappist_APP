@@ -42,12 +42,12 @@ add_message(Timestamp,Sender,Receiver,Text)->
 
 %%helper function
 get_messages(Sender,Receiver)->
-  Retreive = fun() ->
-    %%retreives informationmessages between two users, a sender and a receiver
+  Retrieve = fun() ->
+    %% retrieves information about messages between two users, a sender and a receiver
     Q = qlc:q([{Sender,Receiver, E#messages.text, E#messages.timestamp} || E <- mnesia:table(messages), E#messages.sender == Sender and E#messages.receiver == Receiver]),
-    qlc:e(Q) %%evaluates query and collects messages
+    qlc:e(Q) %% evaluates query and collects messages
       end,
-  mnesia:transaction(Retreive).
+  mnesia:transaction(Retrieve).
 
 %%collects messages retrieved by the get_messages function
 retreive_messages_of_a_therapy(Sender,Receiver)->
