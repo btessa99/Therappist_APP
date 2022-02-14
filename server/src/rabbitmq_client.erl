@@ -17,7 +17,7 @@
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2,
-  code_change/3]).
+  code_change/3, handle_call/3, push/1, handle_call/3]).
 
 -define(SERVER, ?MODULE).
 
@@ -161,14 +161,17 @@ loop_consuming(Channel,  {Receiver_Username, Receiver_Pid}) ->
   case is_process_alive(Channel) of
     true->
       receive
+        %%starts a queue consumer, a transient request for messages from a specific queue
         #'basic.consume_ok'{} ->
           io:format("basic.consume_ok~n"),
           loop_consuming(Channel, {Receiver_Username, Receiver_Pid});
 
+        %%ends a queue consumer
         #'basic.cancel_ok'{} ->
           io:format("cancel~n"),
           cancel;
 
+        %% delivers a message to the client, via a consumer
         {#'basic.deliver'{delivery_tag = Tag}, {amqp_msg,_, Msg}} ->
           amqp_channel:cast(Channel, #'basic.ack'{delivery_tag = Tag}),
           io:format("this is consumed msg ~p~n", [decode_map(jsx:decode(Msg))]),
@@ -193,3 +196,57 @@ loop_consuming(Channel,  {Receiver_Username, Receiver_Pid}) ->
       io:format("dead channel~n"),
       dead_channel
   end.
+
+terminate_consuming_session(Receiver_Username)->
+  gen_server:call(rabbitmq_server, {terminate_consuming_session, Receiver_Username}).
+
+handle_call({terminate_consuming_session, Receiver_Username}, _From, {Connections, Channels, Consumers}) ->
+  {Channel, _} = lists:keyfind(Receiver_Username, 2, Channels),
+  {Consumer, _} = lists:keyfind(Receiver_Username, 2, Consumers),
+  amqp_channel:close(Channel),
+  case is_process_alive(Consumer) of
+    true -> Consumer ! terminate
+  end,
+  io:format("consumer final status: ~p~n", [{Connections, lists:keydelete(Receiver_Username, 2, Channels),
+    lists:keydelete(Receiver_Username,2,Consumers)}]),
+  {reply, true, {Connections, lists:keydelete(Receiver_Username, 2, Channels),
+    lists:keydelete(Receiver_Username,2,Consumers)}};
+
+push({Msg_Id, Sender_Username, Receiver_Username, Text, Timestamp}) ->
+  gen_server:call(rabbitmq_server, {push, {Msg_Id, Sender_Username, Receiver_Username, Text, Timestamp}}).
+
+handle_call({push, {Sender_Username, Receiver_Username, Text, Timestamp}}, _From, {Connections, Channels, Consumers}) ->
+  %%check if the channel for a specific username was created
+  case lists:keyfind(Receiver_Username, 2, Channels) of
+    false ->
+      {reply, pushed, {Connections, Channels, Consumers}};
+    _ ->
+      Message = create_message({Sender_Username, Receiver_Username, Text, Timestamp}),
+      Payload = jsx:encode(Message),
+      Connections = get_connection(Connections),
+      {ok, Channel} = amqp_connection:open_channel(lists:nth(1,Connections)),
+      create_queue(Channel, Receiver_Username),
+      %% Queue name is equal to the Receiver which is the username of the Receiver
+      Publish = #'basic.publish'{exchange = <<>>, routing_key = list_to_binary(Receiver_Username)},
+      Props = #'P_basic'{delivery_mode = 2}, %% persistent message
+      Msg = #amqp_msg{props = Props, payload = Payload},
+      amqp_channel:cast(Channel, Publish, Msg),
+      {reply, pushed, {New_Connections, Channels, Consumers}}
+  end.
+
+%%need erlang 17
+create_message({Sender, Receiver, Text, Timestamp}) ->
+  #{
+    <<"Timestamp">> => list_to_binary(Timestamp),
+    <<"Sender">> => list_to_binary(Sender),
+    <<"Receiver">> => list_to_binary(Receiver),
+    <<"Text">> => list_to_binary(Text),
+
+  }.
+
+decode_message(Message) ->
+  Timestamp = binary_to_list(maps:get(<<"Timestamp">>,Map)),
+  Sender = binary_to_list(maps:get(<<"Sender">>,Map)),
+  Receiver = binary_to_list(maps:get(<<"Receiver">>,Map)),
+  Text = binary_to_list(maps:get(<<"Text">>,Map)),
+  {Timestamp, Sender, Receiver, Text}.
