@@ -13,11 +13,9 @@
 -include_lib("eunit/include/eunit.hrl").
 
 %% API
--export([start/0, stop/0]).
+-export([start/0, stop/0, push/1, request_consuming/2, terminate_consuming_session/1]).
 
-%% gen_server callbacks
--export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2,
-  code_change/3, handle_call/3, push/1, handle_call/3]).
+
 
 -define(SERVER, ?MODULE).
 
@@ -40,7 +38,11 @@ stop() ->
 request_consuming(Receiver_Username, Receiver_Pid)->
   gen_server:call(rabbit_server, {start_consumer, Receiver_Username, Receiver_Pid}).
 
+push({Msg_Id, Sender_Username, Receiver_Username, Text, Timestamp}) ->
+  gen_server:call(rabbitmq_server, {push, {Msg_Id, Sender_Username, Receiver_Username, Text, Timestamp}}).
 
+terminate_consuming_session(Receiver_Username)->
+  gen_server:call(rabbitmq_server, {terminate_consuming_session, Receiver_Username}).
 
 %%%===================================================================
 %%% gen_server callbacks
@@ -59,25 +61,39 @@ init([rabbit_server]) ->
 %% @returns updated lists of connections, channels and consumers
 handle_call({start_consumer, Receiver_Name, Receiver_Pid}, _From, {Connections, Channels, Consumers}) ->
   {New_Connections, New_Channels, New_Consumers} = consume({Connections, Channels, Consumers}, {Receiver_Name, Receiver_Pid}),
-  {reply, consumer_created, {New_Connections, New_Channels, New_Consumers}}.
+  {reply, consumer_created, {New_Connections, New_Channels, New_Consumers}};
 
-%% @private
-%% @doc Handling cast messages
--spec(handle_cast(Request :: term(), State :: #rabbitmq_erlang_state{}) ->
-  {noreply, NewState :: #rabbitmq_erlang_state{}} |
-  {noreply, NewState :: #rabbitmq_erlang_state{}, timeout() | hibernate} |
-  {stop, Reason :: term(), NewState :: #rabbitmq_erlang_state{}}).
-handle_cast(_Request, State = #rabbitmq_erlang_state{}) ->
-  {noreply, State}.
+handle_call({terminate_consuming_session, Receiver_Username}, _From, {Connections, Channels, Consumers}) ->
+  {Channel, _} = lists:keyfind(Receiver_Username, 2, Channels),
+  {Consumer, _} = lists:keyfind(Receiver_Username, 2, Consumers),
+  amqp_channel:close(Channel),
+  case is_process_alive(Consumer) of
+    true -> Consumer ! terminate
+  end,
+  io:format("consumer final status: ~p~n", [{Connections, lists:keydelete(Receiver_Username, 2, Channels),
+    lists:keydelete(Receiver_Username,2,Consumers)}]),
+  {reply, true, {Connections, lists:keydelete(Receiver_Username, 2, Channels),
+    lists:keydelete(Receiver_Username,2,Consumers)}};
 
-%% @private
-%% @doc Handling all non call/cast messages
--spec(handle_info(Info :: timeout() | term(), State :: #rabbitmq_erlang_state{}) ->
-  {noreply, NewState :: #rabbitmq_erlang_state{}} |
-  {noreply, NewState :: #rabbitmq_erlang_state{}, timeout() | hibernate} |
-  {stop, Reason :: term(), NewState :: #rabbitmq_erlang_state{}}).
-handle_info(_Info, State = #rabbitmq_erlang_state{}) ->
-  {noreply, State}.
+
+handle_call({push, {Timestamp, Sender_Username, Receiver_Username, Text}}, _From, {Connections, Channels, Consumers}) ->
+  %%check if the channel for a specific username was created
+  case lists:keyfind(Receiver_Username, 2, Channels) of
+    false ->
+      {reply, pushed, {Connections, Channels, Consumers}};
+    _ ->
+      Message = create_message({Sender_Username, Receiver_Username, Text, Timestamp}),
+      Payload = jsx:encode(Message),
+      Connection = get_connection(Connections),
+      {ok, Channel} = amqp_connection:open_channel(lists:nth(1,Connection)),
+      create_queue(Channel, Receiver_Username),
+      %% Queue name is equal to the Receiver which is the username of the Receiver
+      Publish = #'basic.publish'{exchange = <<>>, routing_key = list_to_binary(Receiver_Username)},
+      Props = #'P_basic'{delivery_mode = 2}, %% persistent message
+      Msg = #amqp_msg{props = Props, payload = Payload},
+      amqp_channel:cast(Channel, Publish, Msg),
+      {reply, pushed, {Connection, Channels, Consumers}}
+  end.
 
 %% @private
 %% @doc This function is called by a gen_server when it is about to
@@ -197,42 +213,8 @@ loop_consuming(Channel,  {Receiver_Username, Receiver_Pid}) ->
       dead_channel
   end.
 
-terminate_consuming_session(Receiver_Username)->
-  gen_server:call(rabbitmq_server, {terminate_consuming_session, Receiver_Username}).
 
-handle_call({terminate_consuming_session, Receiver_Username}, _From, {Connections, Channels, Consumers}) ->
-  {Channel, _} = lists:keyfind(Receiver_Username, 2, Channels),
-  {Consumer, _} = lists:keyfind(Receiver_Username, 2, Consumers),
-  amqp_channel:close(Channel),
-  case is_process_alive(Consumer) of
-    true -> Consumer ! terminate
-  end,
-  io:format("consumer final status: ~p~n", [{Connections, lists:keydelete(Receiver_Username, 2, Channels),
-    lists:keydelete(Receiver_Username,2,Consumers)}]),
-  {reply, true, {Connections, lists:keydelete(Receiver_Username, 2, Channels),
-    lists:keydelete(Receiver_Username,2,Consumers)}};
 
-push({Msg_Id, Sender_Username, Receiver_Username, Text, Timestamp}) ->
-  gen_server:call(rabbitmq_server, {push, {Msg_Id, Sender_Username, Receiver_Username, Text, Timestamp}}).
-
-handle_call({push, {Sender_Username, Receiver_Username, Text, Timestamp}}, _From, {Connections, Channels, Consumers}) ->
-  %%check if the channel for a specific username was created
-  case lists:keyfind(Receiver_Username, 2, Channels) of
-    false ->
-      {reply, pushed, {Connections, Channels, Consumers}};
-    _ ->
-      Message = create_message({Sender_Username, Receiver_Username, Text, Timestamp}),
-      Payload = jsx:encode(Message),
-      Connections = get_connection(Connections),
-      {ok, Channel} = amqp_connection:open_channel(lists:nth(1,Connections)),
-      create_queue(Channel, Receiver_Username),
-      %% Queue name is equal to the Receiver which is the username of the Receiver
-      Publish = #'basic.publish'{exchange = <<>>, routing_key = list_to_binary(Receiver_Username)},
-      Props = #'P_basic'{delivery_mode = 2}, %% persistent message
-      Msg = #amqp_msg{props = Props, payload = Payload},
-      amqp_channel:cast(Channel, Publish, Msg),
-      {reply, pushed, {New_Connections, Channels, Consumers}}
-  end.
 
 %%need erlang 17
 create_message({Sender, Receiver, Text, Timestamp}) ->

@@ -8,7 +8,7 @@
 -module(startup).
 
 %% API
--export([]).
+-export([init_startup/0]).
 
 init_startup() ->
   mnesiaManager:init(),

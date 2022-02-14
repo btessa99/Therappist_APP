@@ -1,6 +1,7 @@
 package it.unipi.dii.dsmt.therappist.controller;
 
 import it.unipi.dii.dsmt.therappist.dto.PatientDTO;
+import it.unipi.dii.dsmt.therappist.dto.UserDTO;
 import it.unipi.dii.dsmt.therappist.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,10 +22,14 @@ public class PatientController {
     @Autowired
     private PatientService service;
 
-    //First visit to the page: returns the jsp file
+    // First visit to the page: opens the chat and erlang management starts:
+    // Starts the message listener for the patient
     @GetMapping(value = "/patient-page")
     public String getPatient(ModelMap model, HttpSession session){
-
+        if(!(boolean)session.getAttribute("activeListener")) {
+            service.startListener((UserDTO) session.getAttribute("user"));
+            session.setAttribute("activeListener", true);
+        }
         return "patient-page";
     }
 

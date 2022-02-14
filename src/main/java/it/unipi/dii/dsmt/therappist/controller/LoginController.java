@@ -50,6 +50,7 @@ public class LoginController {
 
         //User found: login
         session.setAttribute("user",user);
+        session.setAttribute("activeListener",false);
 
         if(role.equals("Patient")){
             PatientDTO logged = (PatientDTO) user;

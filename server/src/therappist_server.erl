@@ -45,9 +45,10 @@ init(_) ->
 %% @private
 %% @doc Handling call messages
 
-handle_call({message, {Msg_Id, Sender, Receiver, Text}}, _From, _) ->
-
-  {reply, ok, State}.
+handle_call({message, {Timestamp, Sender, Receiver, Text}}, _From, _) ->
+  mnesiaHandler:add_message(Timestamp, Sender, Receiver, Text),
+  rabbitmq_client:push({Timestamp, Sender, Receiver, Text}),
+  {reply, ack, _ = '_'}.
 
 %% @private
 %% @doc Handling cast messages
