@@ -10,11 +10,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0]).
-
-%% gen_server callbacks
--export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2,
-  code_change/3]).
+-export([start/0, call_server/1]).
 
 -define(SERVER, ?MODULE).
 
@@ -43,12 +39,23 @@ init(_) ->
   {ok, {}}.
 
 %% @private
-%% @doc Handling call messages
-
+%% @doc Saves the incoming message in mnesia and pushes it to the rabbitmq reciever's queue
 handle_call({message, {Timestamp, Sender, Receiver, Text}}, _From, _) ->
   mnesiaHandler:add_message(Timestamp, Sender, Receiver, Text),
   rabbitmq_client:push({Timestamp, Sender, Receiver, Text}),
-  {reply, ack, _ = '_'}.
+  {reply, ack, _ = '_'};
+
+%% @private
+%% @doc Starts the rabbitmq listener for the logged user and retrieves the chat messages for the opened chat from mnesia
+handle_call({log, {Pid, Username, Chatter, ClientNodeName}}, _From, _) ->
+  case rabbitmq_client:request_consuming(Username, Pid) of
+    consumer_created -> {reply, mnesiaHandler:get_messages(Username, Chatter), _ = '_'};
+    _ -> {reply, [], _ = '_'}
+  end;
+
+%% @doc handles logout: terminates rabbitMQ consuming session
+handle_call({logout, Username}, _From, _) ->
+  {reply, rabbitmq_client:terminate_consuming_session(Username), _='_'}.
 
 %% @private
 %% @doc Handling cast messages
@@ -57,35 +64,16 @@ handle_call({message, {Timestamp, Sender, Receiver, Text}}, _From, _) ->
   {noreply, NewState :: #terappist_server_state{}, timeout() | hibernate} |
   {stop, Reason :: term(), NewState :: #terappist_server_state{}}).
 handle_cast(_Request, State = #terappist_server_state{}) ->
-  {noreply, State}.
-
-%% @private
-%% @doc Handling all non call/cast messages
--spec(handle_info(Info :: timeout() | term(), State :: #terappist_server_state{}) ->
-  {noreply, NewState :: #terappist_server_state{}} |
-  {noreply, NewState :: #terappist_server_state{}, timeout() | hibernate} |
-  {stop, Reason :: term(), NewState :: #terappist_server_state{}}).
-handle_info(_Info, State = #terappist_server_state{}) ->
-  {noreply, State}.
+  {noreply, _ = '_'}.
 
 %% @private
 %% @doc This function is called by a gen_server when it is about to
 %% terminate. It should be the opposite of Module:init/1 and do any
 %% necessary cleaning up. When it returns, the gen_server terminates
 %% with Reason. The return value is ignored.
--spec(terminate(Reason :: (normal | shutdown | {shutdown, term()} | term()),
-    State :: #terappist_server_state{}) -> term()).
 terminate(_Reason, _State = #terappist_server_state{}) ->
   ok.
 
-%% @private
-%% @doc Convert process state when code is changed
--spec(code_change(OldVsn :: term() | {down, term()}, State :: #terappist_server_state{},
-    Extra :: term()) ->
-  {ok, NewState :: #terappist_server_state{}} | {error, Reason :: term()}).
-code_change(_OldVsn, State = #terappist_server_state{}, _Extra) ->
-  {ok, State}.
-
 %%%===================================================================
-%%% Internal functions
+%%% Internal functions: NONE
 %%%===================================================================

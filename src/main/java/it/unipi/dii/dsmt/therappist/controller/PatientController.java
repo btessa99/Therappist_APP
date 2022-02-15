@@ -27,7 +27,8 @@ public class PatientController {
     @GetMapping(value = "/patient-page")
     public String getPatient(ModelMap model, HttpSession session){
         if(!(boolean)session.getAttribute("activeListener")) {
-            service.startListener((UserDTO) session.getAttribute("user"));
+            PatientDTO user = (PatientDTO) session.getAttribute("user");
+            service.startListener(user, user.getTherapist());
             session.setAttribute("activeListener", true);
         }
         return "patient-page";
