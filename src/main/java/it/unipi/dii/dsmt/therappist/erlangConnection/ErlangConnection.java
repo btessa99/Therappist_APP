@@ -75,20 +75,19 @@ public class ErlangConnection {
         }
     }
 
-    public boolean sendMessage(MessageDTO m, int timeout) {
-        Callable<Boolean> toRun = new SendTask(m, timeout);
+    public boolean sendMessage(MessageDTO m) {
+        Callable<Boolean> toRun = new SendTask(m);
         return (boolean) (Boolean)addToExecutor(toRun);
     }
 
     private class SendTask implements Callable<Boolean> {
         private MessageDTO toSend;
         private final OtpMbox mbox;
-        private final int timeout;
 
-        SendTask(MessageDTO m, int timeout){
+
+        SendTask(MessageDTO m){
             toSend=m;
             mbox = userNode.createMbox();
-            this.timeout = timeout;
         }
 
         @Override
@@ -102,7 +101,7 @@ public class ErlangConnection {
             OtpErlangTuple reqMsg = new OtpErlangTuple(new OtpErlangObject[] {mbox.self(), message, messageInfo});
             mbox.send(serverRegisteredName, serverNodeName, reqMsg);
 
-            OtpErlangObject ack = mbox.receive(timeout);
+            OtpErlangObject ack = mbox.receive();
             if(ack==null) //timeout expired
                 return false;
 

@@ -15,6 +15,10 @@ public class MessageDTO {
         this.timestamp = timestamp;
     }
 
+    public MessageDTO() {
+
+    }
+
     public String getSender() {
         return sender;
     }

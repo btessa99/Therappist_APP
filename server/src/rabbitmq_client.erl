@@ -10,10 +10,10 @@
 
 -behaviour(gen_server).
 -include_lib("../_build/default/lib/amqp_client/include/amqp_client.hrl").
--include_lib("eunit/include/eunit.hrl").
+
 
 %% API
--export([start/0, stop/0, push/1, request_consuming/2, terminate_consuming_session/1]).
+-export([start/0, stop/0, push/1, request_consuming/2, terminate_consuming_session/1, decode_message/1]).
 
 
 
@@ -214,21 +214,19 @@ loop_consuming(Channel,  {Receiver_Username, Receiver_Pid}) ->
   end.
 
 
-
-
 %%need erlang 17
 create_message({Sender, Receiver, Text, Timestamp}) ->
   #{
     <<"Timestamp">> => list_to_binary(Timestamp),
     <<"Sender">> => list_to_binary(Sender),
     <<"Receiver">> => list_to_binary(Receiver),
-    <<"Text">> => list_to_binary(Text),
+    <<"Text">> => list_to_binary(Text)
 
   }.
 
 decode_message(Message) ->
-  Timestamp = binary_to_list(maps:get(<<"Timestamp">>,Map)),
-  Sender = binary_to_list(maps:get(<<"Sender">>,Map)),
-  Receiver = binary_to_list(maps:get(<<"Receiver">>,Map)),
-  Text = binary_to_list(maps:get(<<"Text">>,Map)),
+  Timestamp = binary_to_list(maps:get(<<"Timestamp">>,Message)),
+  Sender = binary_to_list(maps:get(<<"Sender">>,Message)),
+  Receiver = binary_to_list(maps:get(<<"Receiver">>,Message)),
+  Text = binary_to_list(maps:get(<<"Text">>,Message)),
   {Timestamp, Sender, Receiver, Text}.

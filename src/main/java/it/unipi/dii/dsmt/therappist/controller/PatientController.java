@@ -26,17 +26,19 @@ public class PatientController {
     // Starts the message listener for the patient
     @GetMapping(value = "/patient-page")
     public String getPatient(ModelMap model, HttpSession session){
+        session.setAttribute("role","patient");
+        PatientDTO myself = (PatientDTO) session.getAttribute("user");
+        session.setAttribute("endpoint",myself.getTherapist());
         if(!(boolean)session.getAttribute("activeListener")) {
-            PatientDTO user = (PatientDTO) session.getAttribute("user");
-            service.startListener(user, user.getTherapist());
+           service.startListener(myself, myself.getTherapist());
             session.setAttribute("activeListener", true);
         }
-        return "patient-page";
+        return "redirect:/chat-page";
     }
 
     @PostMapping(value = "/patient-page")
     public String postPatient(SessionAttributeStore store, WebRequest request){
-        return "patient-page";
+        return "redirect:/chat-page";
     }
 
 
