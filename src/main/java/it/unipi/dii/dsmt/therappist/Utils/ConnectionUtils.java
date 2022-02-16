@@ -2,11 +2,12 @@ package it.unipi.dii.dsmt.therappist.Utils;
 
 import it.unipi.dii.dsmt.therappist.erlangConnection.ErlangConnection;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public  class ConnectionUtils {
 
-   static HashMap<String,ErlangConnection> connections = new HashMap<>();
+   static ConcurrentHashMap<String,ErlangConnection> connections = new ConcurrentHashMap<>();
 
    public static void setNewConnection(String userId,ErlangConnection userConnection){
 
@@ -16,4 +17,6 @@ public  class ConnectionUtils {
    public static ErlangConnection getConnection(String userId){
        return connections.get(userId);
    }
+
+   public static void closeConnection(String userId) {connections.remove(userId); }
 }

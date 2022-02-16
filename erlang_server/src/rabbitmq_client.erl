@@ -12,8 +12,11 @@
 -include_lib("../_build/default/lib/amqp_client/include/amqp_client.hrl").
 
 
+
 %% API
--export([start/0, stop/0, push/1, request_consuming/2, terminate_consuming_session/1, decode_message/1,init/1]).
+-export([start/0, stop/0]).
+-export([start_consuming_handler/2, terminate_consuming_session/1, request_consuming/2, push/1]).
+-export([init/1, handle_call/3, handle_cast/2]).
 
 
 
@@ -38,6 +41,10 @@ stop() ->
 request_consuming(Receiver_Username, Receiver_Pid)->
   gen_server:call(rabbit_server, {start_consumer, Receiver_Username, Receiver_Pid}).
 
+%% @private
+stop_consuming(Consumer) ->
+  Consumer ! server_shutdown.
+
 push({Msg_Id, Sender_Username, Receiver_Username, Text, Timestamp}) ->
   gen_server:call(rabbitmq_server, {push, {Msg_Id, Sender_Username, Receiver_Username, Text, Timestamp}}).
 
@@ -52,7 +59,10 @@ terminate_consuming_session(Receiver_Username)->
 %% @doc Initializes the server
 
 init([rabbit_server]) ->
+%%  CookieBin = atom_to_binary(erlang:get_cookie(), latin1),
+%%  credentials_obfuscation:set_secret(CookieBin),
   Connection = create_connection(),
+  io:format("Rabbit connection established~n"),
   {ok, {[Connection], [], []}}.
 
 %% @private
@@ -60,6 +70,7 @@ init([rabbit_server]) ->
 %% @params Receiver name and Pid, list of connections (always 1), list of active channels and consumers
 %% @returns updated lists of connections, channels and consumers
 handle_call({start_consumer, Receiver_Name, Receiver_Pid}, _From, {Connections, Channels, Consumers}) ->
+  io:format("in start_consumer~n"),
   {New_Connections, New_Channels, New_Consumers} = consume({Connections, Channels, Consumers}, {Receiver_Name, Receiver_Pid}),
   {reply, consumer_created, {New_Connections, New_Channels, New_Consumers}};
 
@@ -96,6 +107,12 @@ handle_call({push, {Timestamp, Sender_Username, Receiver_Username, Text}}, _From
   end.
 
 %% @private
+handle_cast(stop, {Connections, _Channels, Consumers}) ->
+  [stop_consuming(C) || C <- Consumers],
+  [amqp_connection:close(L) || L <- Connections],
+  {noreply, {[],[], []}}.
+
+%% @private
 %% @doc This function is called by a gen_server when it is about to
 %% terminate. It should be the opposite of Module:init/1 and do any
 %% necessary cleaning up. When it returns, the gen_server terminates
@@ -120,14 +137,34 @@ code_change(_OldVsn, State = #rabbitmq_erlang_state{}, _Extra) ->
 %% @private
 %% @doc creates a reabbitmq tcp connection
 create_connection() ->
-  {ok, Connection} = amqp_connection:start(#amqp_params_network{ host="localhost"}),
-  io:format("New Connection created: ~p~n", [Connection]),
-  Connection.
+  io:format("in create_connection()~n"),
+  try
+    amqp_connection:start(#amqp_params_network{})
+  of
+    {ok, Connection} ->
+      io:format("New Connection created: ~p~n", [Connection]),
+      Connection;
+    {error, Error} ->
+      io:format("error: ~p~n", [Error]),
+      Error;
+    _ ->
+      io:format("error~n"),
+      error_conn
+  catch
+    {error, Error} ->
+      io:format("error in catch ~p~n", [Error]),
+      error_catch;
+    _:_ ->
+      io:format("error in catch~n"),
+      error_catch
+  end
+  .
 
 %% @private
 %% @doc gets the connection, opens a new channel for the user and starts the operations for consuming messages
 %% @returns updated lists of connections, channels and consumers
 consume({Connections, Channels, Consumers}, {Receiver_Username, Receiver_Pid}) ->
+  io:format("in consume~n"),
   New_Connections = get_connection(Connections),
   {ok, Channel} = amqp_connection:open_channel(lists:nth(1, New_Connections)),
   {ok, New_Consumer} = start_consuming_handler(Channel, {Receiver_Username, Receiver_Pid}),

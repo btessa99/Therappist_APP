@@ -16,6 +16,16 @@
     <properties>
         <java.version>11</java.version>
     </properties>
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>clojars</id>
+            <url>https://repo.clojars.org</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -100,9 +110,9 @@
             <version>2.6.3</version>
         </dependency>
         <dependency>
-            <groupId>org.erlang.otp</groupId>
-            <artifactId>jinterface</artifactId>
-            <version>1.6.1</version>
+            <groupId>clojang</groupId>
+            <artifactId>erlang-jinterface</artifactId>
+            <version>1.10-1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

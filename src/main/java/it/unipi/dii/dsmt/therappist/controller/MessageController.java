@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import it.unipi.dii.dsmt.therappist.Utils.ConnectionUtils;
 import it.unipi.dii.dsmt.therappist.dto.MessageDTO;
 import it.unipi.dii.dsmt.therappist.event.MessageEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -14,44 +16,57 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MessageController extends TextWebSocketHandler implements ApplicationListener<ApplicationEvent> {
 
     private Gson gson = new Gson();
-    private static Map<String, WebSocketSession> sessions = new HashMap<>();
+    private static ConcurrentHashMap<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, String> sessionUsers = new ConcurrentHashMap<>();
+
+    @Autowired
+    ApplicationEventPublisher applicationEventPublisher;
 
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
 
-            System.out.println( "New message " + message.getPayload());
+        System.out.println( "New message " + message.getPayload());
 
-            MessageDTO tosend = gson.fromJson(message.getPayload(),MessageDTO.class);
+        MessageDTO tosend = gson.fromJson(message.getPayload(),MessageDTO.class);
+        if(tosend.getText().equals("My username is " + tosend.getSender())){
+            sessionUsers.put(tosend.getSender(), session.getId());
+            return;
+        }
+//
+        ConnectionUtils.getConnection(tosend.getSender()).sendMessage(tosend);
 
-            ConnectionUtils.getConnection(tosend.getSender()).sendMessage(tosend);
+        applicationEventPublisher.publishEvent(new MessageEvent(this, tosend));
 
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
-        synchronized (sessions) {
+        System.out.println("Connection established with WebSocket " + session.getId());
+
             sessions.put( session.getId(), session );
-            try {
-                session.sendMessage( new TextMessage( "Session started" ) );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 
-        synchronized (sessions) {
-            sessions.remove( session.getId() );
+        for(String key: sessionUsers.keySet()){
+            if(sessionUsers.get(key).equals(session.getId())) {
+                sessionUsers.remove(key);
+                System.out.println("Session with " + key + " correctly closed");
+                break;
+            }
         }
+        sessions.remove( session.getId() );
+
     }
 
     @Override
@@ -63,17 +78,13 @@ public class MessageController extends TextWebSocketHandler implements Applicati
     public void onApplicationEvent(ApplicationEvent event) {
 
         if(event instanceof MessageEvent){
+            MessageDTO message = ((MessageEvent) event).getNewMessage();
 
-            String message = gson.toJson(((MessageEvent) event).getNewMessage());
+            String messageText = gson.toJson(message);
             try {
-                if ( sessions != null && !sessions.isEmpty() ) {
-                    synchronized (sessions) {
-                        for ( WebSocketSession session : sessions.values() ) {
-                            if ( session.isOpen() ) {
-                                session.sendMessage( new TextMessage( message ) );
-                            }
-                        }
-                    }
+                if(sessionUsers.containsKey(message.getReceiver())){
+                    WebSocketSession session = sessions.get(sessionUsers.get(message.getReceiver()));
+                    session.sendMessage(new TextMessage(messageText));
                 }
             } catch (IOException e) {
                 e.printStackTrace();

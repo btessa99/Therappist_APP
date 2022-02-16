@@ -30,7 +30,7 @@ public class PatientController {
         PatientDTO myself = (PatientDTO) session.getAttribute("user");
         session.setAttribute("endpoint",myself.getTherapist());
         if(!(boolean)session.getAttribute("activeListener")) {
-           service.startListener(myself, myself.getTherapist());
+            service.startListener(myself, myself.getTherapist());
             session.setAttribute("activeListener", true);
         }
         return "redirect:/chat-page";

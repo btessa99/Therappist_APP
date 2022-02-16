@@ -1,18 +1,18 @@
 package it.unipi.dii.dsmt.therappist.service;
 
 import it.unipi.dii.dsmt.therappist.Utils.ServiceUtils;
+import it.unipi.dii.dsmt.therappist.dto.MessageDTO;
 import it.unipi.dii.dsmt.therappist.dto.UserDTO;
 import it.unipi.dii.dsmt.therappist.erlangConnection.ErlangConnection;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 public class PatientService {
 
-    ErlangConnection connection;
-
-
-    public void startListener(UserDTO user, String chatter){
-        ServiceUtils.startListener(user,chatter);
+    public ArrayList<MessageDTO> startListener(UserDTO user, String chatter){
+        return ServiceUtils.startListener(user,chatter);
     }
 
 

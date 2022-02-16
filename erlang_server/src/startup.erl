@@ -21,8 +21,12 @@ init_startup() ->
 
 startup_loop() ->
   receive
-    {From, Action, Argument} -> spawn(fun() -> From ! server_therappist:call_server({Action, Argument}) end);
-    _ -> ok
+    {From, Action, Argument} ->
+      io:format("received message from ~p with action ~p~n", [From, Action]),
+      spawn(fun() -> From ! server_therappist:call_server({Action, Argument}) end);
+    _ ->
+      io:format("received message with wrong format ~n", [] ),
+      ok
   end,
   startup_loop().
 

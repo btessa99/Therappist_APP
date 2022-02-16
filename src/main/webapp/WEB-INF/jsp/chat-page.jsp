@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/chat.css" />
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/chat.js"></script>
 </head>
-<body onload="connect()">
+<body onload="connect('${user.username}')">
 <input type="hidden" id = "username" value="${user.username}"/>
 <input type="hidden" id = "endpoint" value="${endpoint}"/>
 
@@ -30,7 +30,7 @@
 </div>
 <div id="send">
    <label> <textarea id="msg"></textarea></label>
-    <button onclick="send()">Send</button>
+    <button onclick="send('${user.username}', '${endpoint}')">Send</button>
 </div>
 </body>
 </html>

@@ -22,9 +22,6 @@ public class ErlangConnection {
     private OtpNode userNode;
     private ExecutorService myExecutor;
 
-    @Autowired
-    ApplicationEventPublisher applicationEventPublisher;
-
     protected void prepareGateway(String username){
         try {
             myName = username + "_" + userNodeName;
@@ -112,6 +109,8 @@ public class ErlangConnection {
 
     public ArrayList<MessageDTO> initialize(UserDTO user, String chatter) {
         prepareGateway(user.getUsername());
+        System.out.println("connector initialized");
+
         Callable<ArrayList<MessageDTO>> toRunLogin = new LogTask(user, chatter);
         return (ArrayList<MessageDTO>)addToExecutor(toRunLogin);
     }
@@ -136,8 +135,9 @@ public class ErlangConnection {
             OtpErlangString myNodeName = new OtpErlangString(myName);
             OtpErlangTuple tuple = new OtpErlangTuple(new OtpErlangObject[]{receiveMessagesMailbox.self(), username, chatterErl, myNodeName});
             OtpErlangTuple reqMessage = new OtpErlangTuple(new OtpErlangObject[]{pid, log, tuple});
+            System.out.println(reqMessage);
             mbox.send(serverRegisteredName, serverNodeName, reqMessage);
-
+            System.out.println("Init sent to Pid " + serverRegisteredName);
             OtpErlangList response = (OtpErlangList)mbox.receive();
             ArrayList<MessageDTO> chat = new ArrayList<>();
             for(OtpErlangObject o: response){
@@ -160,50 +160,8 @@ public class ErlangConnection {
         }
     }
 
-    public boolean logout(UserDTO user){
-        boolean result = (Boolean)addToExecutor(new LogoutTask(user));
+    public void logout(UserDTO user){
         stopExecutor();
-        return result;
     }
 
-    private class LogoutTask implements Callable<Boolean>{
-        private UserDTO me;
-        private final OtpMbox mbox;
-
-        LogoutTask(UserDTO u){
-            me=u;
-            mbox = userNode.createMbox();
-        }
-
-        @Override
-        public Boolean call() throws Exception {
-            OtpErlangPid pid = mbox.self();
-            OtpErlangAtom logout = new OtpErlangAtom("logout");
-
-            OtpErlangString username = new OtpErlangString(me.getUsername());
-            OtpErlangTuple reqMessage = new OtpErlangTuple(new OtpErlangObject[]{pid, logout, username});
-            mbox.send(serverRegisteredName, serverNodeName, reqMessage);
-
-            OtpErlangAtom response = (OtpErlangAtom) mbox.receive();
-            return response.booleanValue();
-        }
-    }
-
-    public void receiveMessage() {
-        try {
-            OtpErlangTuple incomingMessage;
-            while(!Thread.currentThread().isInterrupted()){
-                incomingMessage = (OtpErlangTuple) receiveMessagesMailbox.receive(5000);
-                if(incomingMessage!=null){
-                    String sender = ((OtpErlangString)incomingMessage.elementAt(1)).stringValue();
-                    String receiver = ((OtpErlangString)incomingMessage.elementAt(2)).stringValue();
-                    String text = ((OtpErlangString)incomingMessage.elementAt(3)).stringValue();
-                    long timestamp = ((OtpErlangLong)incomingMessage.elementAt(4)).longValue();
-                    applicationEventPublisher.publishEvent(new MessageEvent(this, new MessageDTO(sender, receiver, text, timestamp)));
-                }
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

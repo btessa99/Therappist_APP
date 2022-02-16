@@ -1,23 +1,37 @@
 var ws;
 
-function connect() {
-    var username = document.getElementById("username").value;
+function connect(username) {
 
     var host = document.location.host;
     var pathname = document.location.pathname;
     const url = "ws://" +host  + pathname + "/chat";
-    alert(url);
+    //alert(url);
     ws = new WebSocket(url);
+    rightNow = new Date().getTime();
 
     ws.onmessage = function(event) {
-        var log = document.getElementById("log");
+        var log = document.getElementById("chat-holder");
         console.log(event.data);
         var message = JSON.parse(event.data);
-        log.innerHTML += message.from + " : " + message.content + "\n";
+        log.innerHTML += message.sender + " : " + message.text + "\n";
     };
+
+    ws.onopen = function() {
+        json = JSON.stringify({
+            "sender":username,
+            "receiver":username,
+            "text":"My username is " + username,
+            "timestamp": rightNow
+        });
+        alert(json);
+        ws.send(json);
+    }
+
+
+
 }
 
-function send() {
+function send(sender, receiver) {
 
     var textfield = document.getElementById("msg");
     var content = textfield.value;
@@ -26,8 +40,8 @@ function send() {
         return;
 
     var json = JSON.stringify({
-        "sender":document.getElementById("username"),
-        "receiver":document.getElementById("endpoint"),
+        "sender":sender,
+        "receiver":receiver,
         "text":content,
         "timestamp": new Date().getTime()
     });

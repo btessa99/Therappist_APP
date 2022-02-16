@@ -9,7 +9,7 @@
 -author("benedettatessa+pietrotempesti").
 
 %% API
--export([init/0,add_message/4,get_messages/2,retreive_messages_of_a_therapy/2]).
+-export([init/0,add_message/4,get_messages/2,retrieve_messages_of_a_therapy/2]).
 -include("hrl/schema_info.hrl").
 -include_lib("stdlib/include/qlc.hrl").
 
@@ -20,8 +20,10 @@ init() ->
   %%check if tables is present
   case mnesia:wait_for_tables(messages,4000) == ok of
     true-> %%if true, finish
+      io:format("mnesia initialized ~n"),
       ok;
     false -> %%else, create table
+      io:format("mnesia initialized ~n"),
       mnesia:create_table(messages,
       [{attributes, record_info(fields, messages)},
       {disc_copies, [node()]}
@@ -51,6 +53,6 @@ get_messages(Sender,Receiver)->
   mnesia:transaction(Retrieve).
 
 %%collects messages retrieved by the get_messages function
-retreive_messages_of_a_therapy(Sender,Receiver)->
+retrieve_messages_of_a_therapy(Sender,Receiver)->
   {_,History_of_Messages} = get_messages(Sender,Receiver),
   History_of_Messages.
