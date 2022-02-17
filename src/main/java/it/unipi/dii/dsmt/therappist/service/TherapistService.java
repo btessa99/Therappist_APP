@@ -1,6 +1,7 @@
 package it.unipi.dii.dsmt.therappist.service;
 
 import it.unipi.dii.dsmt.therappist.Utils.ServiceUtils;
+import it.unipi.dii.dsmt.therappist.dto.MessageDTO;
 import it.unipi.dii.dsmt.therappist.dto.PatientDTO;
 import it.unipi.dii.dsmt.therappist.dto.UserDTO;
 import it.unipi.dii.dsmt.therappist.persistence.crudRepositories.PatientRepository;
@@ -31,8 +32,8 @@ public class TherapistService {
     }
 
 
-    public void startListener(UserDTO user, String chatter){
-        ServiceUtils.startListener(user,chatter);
+    public ArrayList<MessageDTO> startListener(UserDTO user, String chatter){
+        return ServiceUtils.startListener(user,chatter);
     }
 
 }

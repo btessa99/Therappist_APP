@@ -1,5 +1,6 @@
 package it.unipi.dii.dsmt.therappist.controller;
 
+import it.unipi.dii.dsmt.therappist.dto.MessageDTO;
 import it.unipi.dii.dsmt.therappist.dto.PatientDTO;
 import it.unipi.dii.dsmt.therappist.dto.TherapistDTO;
 import it.unipi.dii.dsmt.therappist.service.TherapistService;
@@ -35,7 +36,11 @@ public class TherapistController {
     @PostMapping(value = "/therapist-page")
     public String postTherapist(ModelMap model, HttpSession session, @RequestParam String patient){
         session.setAttribute("endpoint",patient);
-        service.startListener((TherapistDTO) session.getAttribute("user"),patient);
+        if(!(boolean)session.getAttribute("activeListener")){
+            ArrayList<MessageDTO> history = service.startListener((TherapistDTO) session.getAttribute("user"), patient);
+            session.setAttribute("history", history);
+            session.setAttribute("activeListener", true);
+        }
         return "redirect:/chat-page";
     }
 
