@@ -3,7 +3,7 @@ package it.unipi.dii.dsmt.therappist.service;
 import it.unipi.dii.dsmt.therappist.dto.PatientDTO;
 import it.unipi.dii.dsmt.therappist.persistence.crudRepositories.PatientRepository;
 import it.unipi.dii.dsmt.therappist.persistence.entities.Patient;
-import it.unipi.dii.dsmt.therappist.persistence.service.ImplementationService;
+import it.unipi.dii.dsmt.therappist.persistence.persistence_service.UsersConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ public class SignInService {
 
     public void addPatient(PatientDTO newPatient){
 
-        patientRepository.save(ImplementationService.mapPatient(newPatient));
+        patientRepository.save(UsersConverter.mapPatient(newPatient));
 
     }
 

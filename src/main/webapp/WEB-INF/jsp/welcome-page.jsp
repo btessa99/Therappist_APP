@@ -21,6 +21,7 @@
     <select id = "role-select" name = "role">
         <option name = "patient"> Patient </option>
         <option name = "therapist"> Therapist </option>
+        <option name = "admin"> Admin </option>
     </select>
     <input type="submit" value="Login"/>
 </form>

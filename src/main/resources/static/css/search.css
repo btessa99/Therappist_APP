@@ -20,14 +20,14 @@ h1{
 }
 
 .color{
-    color: peru;
+    color: #cd853f;
 }
 
 .info-therapist{
 
     text-align: center;
-    border-top-color: peru;
-    border-bottom-color: peru ;
+    border-top-color: #cd853f;
+    border-bottom-color: #cd853f ;
 }
 
 .submit{

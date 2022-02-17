@@ -19,6 +19,7 @@ public class ChatController {
     @GetMapping(value = "/chat-page")
     public String init(ModelMap model, HttpSession session){
 
+        System.out.println("hellou");
         return "chat-page";
     }
 

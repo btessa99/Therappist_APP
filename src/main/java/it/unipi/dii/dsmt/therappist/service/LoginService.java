@@ -6,7 +6,7 @@ import it.unipi.dii.dsmt.therappist.persistence.crudRepositories.PatientReposito
 import it.unipi.dii.dsmt.therappist.persistence.crudRepositories.TherapistRepository;
 import it.unipi.dii.dsmt.therappist.persistence.entities.Patient;
 import it.unipi.dii.dsmt.therappist.persistence.entities.Therapist;
-import it.unipi.dii.dsmt.therappist.persistence.service.ImplementationService;
+import it.unipi.dii.dsmt.therappist.persistence.persistence_service.UsersConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +22,13 @@ public class LoginService {
     //gets a patient given a username
     public PatientDTO getPatient(String userid){
         Patient patient = patientRepository.findByUsername(userid);
-        return ImplementationService.mapPatientDTO(patient);
+        return UsersConverter.mapPatientDTO(patient);
     }
 
     //gets a therapist given a username
     public TherapistDTO getTherapist(String userid){
         Therapist therapist = therapistRepository.findByUsername(userid);
-        return ImplementationService.mapTherapistDTO(therapist);
+        return UsersConverter.mapTherapistDTO(therapist);
     }
 
 }

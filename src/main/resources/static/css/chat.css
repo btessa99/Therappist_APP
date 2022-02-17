@@ -13,18 +13,42 @@ h3 {
 
 button{
 
-    background-color: peru;
+    background-color: #cd853f;
     border-radius: 15px;
+}
+
+.message_sent{
+
+    border: 2px solid #cd853f;
+    background-color: ivory;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: right;
+}
+
+.message_received{
+    border: 2px solid #cd853f;
+    background-color: cornsilk;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: left;
 }
 
 #title{
 
-    background-color: peru;
+    background-color: #cd853f;
 }
 
 #chat-holder{
 
-    border-color: peru;
+    margin: auto;
+    font-size: 15px;
+    background-color: #ffcc99;
+    width: 1110px;
+    height: 510px;
+    overflow: scroll;
 
 }
 
@@ -32,4 +56,13 @@ button{
 
     position: relative;
     bottom: 30px;
+}
+
+.message_text{
+
+    font-size: 20px;
+
+}
+.color{
+    color: #cd853f;
 }

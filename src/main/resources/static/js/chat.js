@@ -17,7 +17,7 @@ function connect(username) {
         let message_text = document.createElement('p');
         message_text.className = "message_text";
         message_text.textContent = message.text;
-        message_div.append(message_text);
+        message_div.append(message_text)
         log.append(message_div);
     };
 
@@ -58,6 +58,10 @@ function send(sender, receiver) {
     let message_text = document.createElement('p');
     message_text.className = "message_text";
     message_text.textContent = content;
+    let message_label = document.createElement('label');
+    message_label.textContent = "Me";
+    message_label.className = "color"
+    message_div.append(message_label)
     message_div.append(message_text);
     log.append(message_div);
 }

@@ -6,7 +6,10 @@
 </head>
 <body>
 
-<a href="logout">Logout</a> <br>
+<a href="logout">Logout</a> &nbsp;
+<c:if test="${role == 'admin'}">
+    <a href="admin-page">Admin Control Page</a>
+</c:if>
 
     <div class="info-therapist">
         <form method="post">
@@ -16,7 +19,7 @@
                     <option value="${patient.username}">${patient.username}</option>
                 </c:forEach>
             </select> <br>
-            <button type="submit" id="submit" class="color"> Chat!</button>
+            <button type="submit" id="submit"> Start Chatting!</button>
         </form>
     </div>
 </body>

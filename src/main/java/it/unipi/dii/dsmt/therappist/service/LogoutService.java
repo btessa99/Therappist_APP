@@ -1,7 +1,6 @@
 package it.unipi.dii.dsmt.therappist.service;
 
 import it.unipi.dii.dsmt.therappist.Utils.ConnectionUtils;
-import it.unipi.dii.dsmt.therappist.dto.UserDTO;
 import org.springframework.stereotype.Service;
 
 //Empty service: I don't need this
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 public class LogoutService {
 
     public void logout(String username){
-        ConnectionUtils.getConnection(username).logout();
-        ConnectionUtils.closeConnection(username);
+        ConnectionUtils.endConnection(username);
     }
 }

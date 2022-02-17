@@ -19,6 +19,7 @@ public class ChangeCredentialsController {
 
     @GetMapping(value = "/change-credentials")
     public String getPage(){
+        System.out.println("ciaooo");
         return "change-credentials";
     }
 

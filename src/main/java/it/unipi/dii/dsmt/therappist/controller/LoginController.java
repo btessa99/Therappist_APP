@@ -10,21 +10,19 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
 
 import javax.servlet.http.HttpSession;
 
 
 @Controller
-//@SessionAttributes("user")
+
 public class LoginController {
 
     @Autowired
     LoginService service;
 
     @GetMapping(value="/")
-    public String showLoginPage(HttpSession session, SessionStatus status){
+    public String showLoginPage(){
         return "welcome-page";
     }
 
@@ -55,12 +53,14 @@ public class LoginController {
                 return "welcome-page";
             }
             session.setAttribute("user",user);
+            session.setAttribute("role","admin");
             return "redirect:/admin-page";
         }
 
         //User found: login
         session.setAttribute("user",user);
         session.setAttribute("activeListener",false);
+
 
         if(role.equals("Patient")){
             PatientDTO logged = (PatientDTO) user;
@@ -73,6 +73,7 @@ public class LoginController {
                 
         }
         // the user credentials are valid and the user in question is a therapist
+
         TherapistDTO loggedTherapist = (TherapistDTO) user;
         if(loggedTherapist.getState().equals("pending")) //the therapist is yet to be admitted
             return "waiting-page";

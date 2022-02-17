@@ -63,3 +63,5 @@ get_messages(Sender,Receiver)->
 retrieve_messages_of_a_therapy(Sender,Receiver)->
   {_,History_of_Messages} = get_messages(Sender,Receiver),
   History_of_Messages.
+
+

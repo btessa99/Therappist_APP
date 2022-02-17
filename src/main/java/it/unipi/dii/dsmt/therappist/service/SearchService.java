@@ -6,7 +6,7 @@ import it.unipi.dii.dsmt.therappist.dto.TherapistDTO;
 import it.unipi.dii.dsmt.therappist.persistence.crudRepositories.PatientRepository;
 import it.unipi.dii.dsmt.therappist.persistence.crudRepositories.TherapistRepository;
 import it.unipi.dii.dsmt.therappist.persistence.entities.Therapist;
-import it.unipi.dii.dsmt.therappist.persistence.service.ImplementationService;
+import it.unipi.dii.dsmt.therappist.persistence.persistence_service.UsersConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ public class SearchService {
         ArrayList<Therapist> therapists = therapistRepository.findAvailableTherapists(specialization);
         ArrayList<TherapistDTO> output = new ArrayList<>();
         for(Therapist therapist: therapists){
-            output.add(ImplementationService.mapTherapistDTO(therapist));
+            output.add(UsersConverter.mapTherapistDTO(therapist));
         }
         return output;
     }
@@ -36,7 +36,7 @@ public class SearchService {
     //to update such info in the database
     public void associateTherapist(PatientDTO patient){
 
-        patientRepository.save(ImplementationService.mapPatient(patient));
+        patientRepository.save(UsersConverter.mapPatient(patient));
 
     }
 
