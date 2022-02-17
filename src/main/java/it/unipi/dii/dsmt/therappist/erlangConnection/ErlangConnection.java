@@ -138,7 +138,9 @@ public class ErlangConnection {
             System.out.println(reqMessage);
             mbox.send(serverRegisteredName, serverNodeName, reqMessage);
             System.out.println("Init sent to Pid " + serverRegisteredName);
-            OtpErlangList response = (OtpErlangList)mbox.receive();
+            OtpErlangTuple responseTuple = (OtpErlangTuple)mbox.receive();
+            System.out.println(responseTuple);
+            OtpErlangList response = (OtpErlangList) responseTuple.elementAt(1);
             ArrayList<MessageDTO> chat = new ArrayList<>();
             for(OtpErlangObject o: response){
                 OtpErlangTuple message = (OtpErlangTuple) o;
@@ -147,6 +149,7 @@ public class ErlangConnection {
                 String text = ((OtpErlangString)message.elementAt(2)).stringValue();
                 long timestamp = ((OtpErlangLong)message.elementAt(3)).longValue();
                 MessageDTO toInsert = new MessageDTO(sender, receiver, text, timestamp);
+                System.out.println(toInsert.getText());
                 chat.add(toInsert);
             }
             if(chat.size() > 0)
@@ -160,7 +163,7 @@ public class ErlangConnection {
         }
     }
 
-    public void logout(UserDTO user){
+    public void logout(){
         stopExecutor();
     }
 

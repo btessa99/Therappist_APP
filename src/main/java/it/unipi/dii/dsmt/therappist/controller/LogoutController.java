@@ -1,5 +1,6 @@
 package it.unipi.dii.dsmt.therappist.controller;
 
+import it.unipi.dii.dsmt.therappist.dto.UserDTO;
 import it.unipi.dii.dsmt.therappist.service.LogoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ public class LogoutController {
     @GetMapping("/logout")
 
     public String logoutGet(HttpSession session){
+        service.logout(((UserDTO)session.getAttribute("user")).getUsername());
         session.invalidate();
         return "redirect:/";
     }

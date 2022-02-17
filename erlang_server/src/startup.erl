@@ -15,7 +15,6 @@ init_startup() ->
   server_therappist:start(),
   Serv = spawn(fun() -> startup_loop() end),
   io:format("I am ~w", [Serv]),
-  unregister(therappist_server),
   register(therappist_server, Serv),
   Serv.
 

@@ -1,5 +1,6 @@
 package it.unipi.dii.dsmt.therappist.controller;
 
+import it.unipi.dii.dsmt.therappist.dto.MessageDTO;
 import it.unipi.dii.dsmt.therappist.dto.PatientDTO;
 import it.unipi.dii.dsmt.therappist.dto.UserDTO;
 import it.unipi.dii.dsmt.therappist.service.PatientService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.support.SessionAttributeStore;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 
 
 @Controller
@@ -30,7 +32,8 @@ public class PatientController {
         PatientDTO myself = (PatientDTO) session.getAttribute("user");
         session.setAttribute("endpoint",myself.getTherapist());
         if(!(boolean)session.getAttribute("activeListener")) {
-            service.startListener(myself, myself.getTherapist());
+            ArrayList<MessageDTO> history = service.startListener(myself, myself.getTherapist());
+            session.setAttribute("history", history);
             session.setAttribute("activeListener", true);
         }
         return "redirect:/chat-page";

@@ -39,9 +39,7 @@ public class MessageController extends TextWebSocketHandler implements Applicati
             sessionUsers.put(tosend.getSender(), session.getId());
             return;
         }
-//
         ConnectionUtils.getConnection(tosend.getSender()).sendMessage(tosend);
-
         applicationEventPublisher.publishEvent(new MessageEvent(this, tosend));
 
     }

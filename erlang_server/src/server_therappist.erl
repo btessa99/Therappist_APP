@@ -21,10 +21,10 @@
 
 %% @doc Spawns the server and registers the local name (unique)
 start() ->
-  gen_server:start({local, therappist_server}, ?MODULE, [], []).
+  gen_server:start({local, therappist_gen_server}, ?MODULE, [], []).
 
 call_server(Content) ->
-  gen_server:call(therappist_server, Content).
+  gen_server:call(therappist_gen_server, Content).
 
 %%%===================================================================
 %%% gen_server callbacks

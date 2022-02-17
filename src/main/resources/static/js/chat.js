@@ -1,29 +1,33 @@
-var ws;
+let ws;
 
 function connect(username) {
 
-    var host = document.location.host;
-    var pathname = document.location.pathname;
+    let host = document.location.host;
+    let pathname = document.location.pathname;
     const url = "ws://" +host  + pathname + "/chat";
-    //alert(url);
     ws = new WebSocket(url);
-    rightNow = new Date().getTime();
+    let rightNow = new Date().getTime();
 
     ws.onmessage = function(event) {
-        var log = document.getElementById("chat-holder");
-        console.log(event.data);
-        var message = JSON.parse(event.data);
-        log.innerHTML += message.sender + " : " + message.text + "\n";
+        let log = document.getElementById("chat-holder");
+        let message = JSON.parse(event.data);
+        //create a new div element for the received message and put the text int it
+        let message_div = document.createElement('div');
+        message_div.className = "message_received";
+        let message_text = document.createElement('p');
+        message_text.className = "message_text";
+        message_text.textContent = message.text;
+        message_div.append(message_text);
+        log.append(message_div);
     };
 
     ws.onopen = function() {
-        json = JSON.stringify({
+        let json = JSON.stringify({
             "sender":username,
             "receiver":username,
             "text":"My username is " + username,
             "timestamp": rightNow
         });
-        alert(json);
         ws.send(json);
     }
 
@@ -33,13 +37,13 @@ function connect(username) {
 
 function send(sender, receiver) {
 
-    var textfield = document.getElementById("msg");
-    var content = textfield.value;
+    let textfield = document.getElementById("msg");
+    let content = textfield.value;
 
     if(content.value === "")
         return;
 
-    var json = JSON.stringify({
+    let json = JSON.stringify({
         "sender":sender,
         "receiver":receiver,
         "text":content,
@@ -48,4 +52,12 @@ function send(sender, receiver) {
 
     textfield.value = "";
     ws.send(json);
+    let log = document.getElementById("chat-holder");
+    let message_div = document.createElement('div');
+    message_div.className = "message_sent";
+    let message_text = document.createElement('p');
+    message_text.className = "message_text";
+    message_text.textContent = content;
+    message_div.append(message_text);
+    log.append(message_div);
 }

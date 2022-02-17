@@ -16,6 +16,7 @@ public abstract class UserDTO implements Serializable {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.dateOfBirth = dateOfBirth;
     }
 
     public UserDTO() {}

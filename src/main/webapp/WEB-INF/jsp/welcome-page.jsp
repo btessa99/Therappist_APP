@@ -26,7 +26,7 @@
 </form>
 </div>
 <br>
-<p>You are not subscribed yet? Click <a href="/sign-in"> here!</a> if you want to sign up as a patience</p>
+<p>You are not subscribed yet? Click <a href="/sign-in"> here!</a> if you want to sign up as a patient</p>
 <p>Or <a href="/sign-in-therapist"> here!</a> if you want to become a therapist</p>
 </body>
 

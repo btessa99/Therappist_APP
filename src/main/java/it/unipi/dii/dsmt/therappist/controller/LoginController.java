@@ -32,7 +32,7 @@ public class LoginController {
     public String showWelcomePage(ModelMap model, HttpSession session, @RequestParam String name, @RequestParam String password, @RequestParam String role){
 
         UserDTO user = null;
-        
+
         if(role.equals("Patient")) 
             user = service.getPatient(name);
         else
@@ -46,6 +46,16 @@ public class LoginController {
         if(!user.getPassword().equals(password)){
             model.put("errorMessage", "Wrong password");
             return "welcome-page";            
+        }
+
+        if(role.equals("Admin")){
+            TherapistDTO admin = (TherapistDTO) user;
+            if(!admin.getState().equals("admin")){
+                model.put("errorMessage", "Not an administrator");
+                return "welcome-page";
+            }
+            session.setAttribute("user",user);
+            return "redirect:/admin-page";
         }
 
         //User found: login
