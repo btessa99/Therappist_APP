@@ -24,7 +24,6 @@ public class AdminService {
 
 
         return pendingTherapists;
-
     }
 
     public void changeStateTherapist(TherapistDTO toActivate,String state) {

@@ -31,9 +31,4 @@ public class TherapistService {
 
     }
 
-
-    public ArrayList<MessageDTO> startListener(UserDTO user, String chatter){
-        return ServiceUtils.startListener(user,chatter);
-    }
-
 }

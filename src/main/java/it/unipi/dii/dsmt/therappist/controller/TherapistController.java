@@ -35,15 +35,7 @@ public class TherapistController {
 
     @PostMapping(value = "/therapist-page")
     public String postTherapist(ModelMap model, HttpSession session, @RequestParam String patient){
-
         session.setAttribute("endpoint",patient);
-        if(!(boolean)session.getAttribute("activeListener")) {
-            TherapistDTO myself = (TherapistDTO)session.getAttribute("user");
-            ArrayList<MessageDTO> history = service.startListener(myself, patient);
-            session.setAttribute("history", history);
-            session.setAttribute("activeListener", true);
-        }
-
         return "redirect:/chat-page";
     }
 

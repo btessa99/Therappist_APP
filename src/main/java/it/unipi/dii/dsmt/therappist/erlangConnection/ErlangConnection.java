@@ -21,6 +21,7 @@ public class ErlangConnection {
     private OtpMbox receiveMessagesMailbox;
     private OtpNode userNode;
     private ExecutorService myExecutor;
+    private boolean isUp = false;
 
     protected void prepareGateway(String username){
         try {
@@ -35,6 +36,7 @@ public class ErlangConnection {
                 receiveMessagesMailbox.close();
             receiveMessagesMailbox = userNode.createMbox(username + "_mailbox");
             receiveMessagesMailbox.registerName(receiveMessagesMailbox.getName());
+            isUp = true;
         }catch (IOException ioe){
             ioe.printStackTrace();
         }
@@ -108,9 +110,10 @@ public class ErlangConnection {
     }
 
     public ArrayList<MessageDTO> initialize(UserDTO user, String chatter) {
-        prepareGateway(user.getUsername());
-        System.out.println("connector initialized");
-
+        if(!isUp) {
+            prepareGateway(user.getUsername());
+            System.out.println("connector initialized");
+        }
         Callable<ArrayList<MessageDTO>> toRunLogin = new LogTask(user, chatter);
         return (ArrayList<MessageDTO>)addToExecutor(toRunLogin);
     }
