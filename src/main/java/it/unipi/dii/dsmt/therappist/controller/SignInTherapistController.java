@@ -34,7 +34,6 @@ public class SignInTherapistController {
                          @RequestParam String date_of_birth,
                          @RequestParam String gender,
                          @RequestParam String pass,
-                         @RequestParam String phone_number,
                          @RequestParam String biography,
                          @RequestParam Integer number,
                          @RequestParam("field") String[] fields){

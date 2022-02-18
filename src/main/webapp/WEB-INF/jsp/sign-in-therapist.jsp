@@ -17,7 +17,6 @@ we will contact you as soon as possible to schedule an interview</p>
     <label>Gender: <input type="text" name="gender" required/></label> <br>
     <label>Date of birth: <input type="date" name="date_of_birth" required/></label> <br>
     <label>Email: <input type="text" name="email" id="email" required/></label>  <br>
-    <label>Phone Number: <input type="text" name="phone_number" required/></label>  <br>
     <label>How would you introduce yourself to your patients? <input type="text" name="biography" required/></label>  <br>
     <label>Username:  <input type="text" name="username" required/> </label><br>
     <label>Password: <input type="password" name="pass" id="password" required/> </label> <br>

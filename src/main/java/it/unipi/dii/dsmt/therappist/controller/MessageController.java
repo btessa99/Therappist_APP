@@ -15,6 +15,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -55,11 +56,11 @@ public class MessageController extends TextWebSocketHandler implements Applicati
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-
-        for(String key: sessionUsers.keySet()){
-            if(sessionUsers.get(key).equals(session.getId())) {
-                sessionUsers.remove(key);
-                System.out.println("Session with " + key + " correctly closed");
+        Iterator<String> keys = sessionUsers.keySet().iterator();
+        while(keys.hasNext()){
+            if(keys.next().equals(session.getId())) {
+                sessionUsers.remove(session.getId());
+                System.out.println("Session with " + session.getId() + " correctly closed");
                 break;
             }
         }

@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/search.css" />
 </head>
 <body>
+<a href="logout">Logout</a>
 <h1 class="color">Welcome, ${user.fullName}</h1>
 <p class="color" id="bigger">Choose your therapist from the list below:</p>
 <c:forEach var="therapist" items="${availableTherapists}">

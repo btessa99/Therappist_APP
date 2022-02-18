@@ -7,7 +7,7 @@
 </head>
 
 
-<body onload="connect('${user.username}')">
+<body onload="connect('${user.username}', '${endpoint}')">
 
 
 <c:choose>
