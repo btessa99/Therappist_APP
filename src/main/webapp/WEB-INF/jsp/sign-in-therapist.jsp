@@ -13,7 +13,7 @@ we will contact you as soon as possible to schedule an interview</p>
 
 
 <form method="post" id="form">
-    <label>First Name:  <input type="text" name="full_name" required/> </label><br>
+    <label>Full Name:  <input type="text" name="full_name" required/> </label><br>
     <label>Gender: <input type="text" name="gender" required/></label> <br>
     <label>Date of birth: <input type="date" name="date_of_birth" required/></label> <br>
     <label>Email: <input type="text" name="email" id="email" required/></label>  <br>
