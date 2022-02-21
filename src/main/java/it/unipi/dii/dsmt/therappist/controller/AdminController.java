@@ -20,8 +20,8 @@ public class AdminController {
     @Autowired
     AdminService service;
 
-    @GetMapping(value="/admin-page")
-    public String getAdmin(HttpSession session, ModelMap model){
+    @GetMapping(value = "/admin-page")
+    public String getAdmin(HttpSession session, ModelMap model) {
         // retrieve pending therapists and add them in session
         ArrayList<TherapistDTO> pendingTherapists = service.getTherapistsByState("pending");
         ArrayList<TherapistDTO> activeTherapists = service.getTherapistsByState("active");
@@ -30,12 +30,12 @@ public class AdminController {
         return "admin-page";
     }
 
-    @PostMapping(value="/admin-page")
-    public String postAdmin(HttpSession session, HttpServletRequest request){
+    @PostMapping(value = "/admin-page")
+    public String postAdmin(HttpSession session, HttpServletRequest request) {
         //Retrieve the list of the pending therapists
 
 
-        if(request.getParameter("therapist") != null) {
+        if (request.getParameter("therapist") != null) {
 
             String newState = request.getParameter("state");
             String therapist = request.getParameter("therapist");
@@ -46,21 +46,19 @@ public class AdminController {
                 // select the therapist I want to activate and remove them from the list
                 if (pending.getUsername().equals(therapist)) {
 
-                    if(newState.equals("active")) { //add the new therapist to the list of active therapists
+                    if (newState.equals("active")) { //add the new therapist to the list of active therapists
                         service.changeStateTherapist(pending, "active");
                         ArrayList<TherapistDTO> actives = (ArrayList<TherapistDTO>) session.getAttribute("activeTherapists");
                         actives.add(pending);
                         session.setAttribute("activeTherapists", actives);
-                    }
-                    else
+                    } else
                         service.declineNewTherapist(therapist); //this therapist failed the interview. Remove from database
 
                     pendings.remove(pending);
                     break;
                 }
             }
-        }
-        else {
+        } else {
             String therapist = request.getParameter("therapistActive");
             ArrayList<TherapistDTO> active = (ArrayList<TherapistDTO>) session.getAttribute("activeTherapists");
             for (TherapistDTO toActivate : active) {

@@ -51,7 +51,8 @@ public class Therapist implements Serializable {
     @Column(name = "accepted_patients")
     private int acceptedPatients;
 
-    public Therapist(){}
+    public Therapist() {
+    }
 
     public String getUsername() {
         return username;

@@ -21,20 +21,20 @@ public class CredentialTherapistController {
     private CredentialTherapistService service;
 
     @GetMapping(value = "/change-credentials-therapists")
-    public String getPage(){
+    public String getPage() {
         return "change-credentials-therapists";
     }
 
     //If the new password is submitted and matches with the confirmation field,
     //and/or the issue is modified, I update the patient either in DB and in session
     @PostMapping(value = "/change-credentials-therapists")
-    public String postPage(ModelMap model, @RequestParam String pass, @RequestParam String pass_confirm, @RequestParam("field") String[] fields,@RequestParam String change,@RequestParam Integer number ,HttpSession session){
+    public String postPage(ModelMap model, @RequestParam String pass, @RequestParam String pass_confirm, @RequestParam("field") String[] fields, @RequestParam String change, @RequestParam Integer number, HttpSession session) {
         TherapistDTO therapist = (TherapistDTO) session.getAttribute("user");
         boolean isChanged = false;
 
         //Password verification
-        if(!pass.equals("")){
-            if(!pass.equals(pass_confirm)){
+        if (!pass.equals("")) {
+            if (!pass.equals(pass_confirm)) {
                 model.put("errorMessage", "Password don't match");
                 return "change-credentials-therapist";
             }
@@ -42,8 +42,8 @@ public class CredentialTherapistController {
             isChanged = true;
         }
 
-        String[] mySpecializations = new String[]{therapist.getSpecialization1(),therapist.getSpecialization2(),therapist.getSpecialization3()};
-        if(!Arrays.equals(mySpecializations,fields)){
+        String[] mySpecializations = new String[]{therapist.getSpecialization1(), therapist.getSpecialization2(), therapist.getSpecialization3()};
+        if (!Arrays.equals(mySpecializations, fields)) {
 
             isChanged = true;
             therapist.setSpecialization1(fields[0]);
@@ -51,20 +51,20 @@ public class CredentialTherapistController {
             therapist.setSpecialization3(fields.length > 2 ? fields[2] : null);
         }
 
-        if(therapist.getMaxPatients() != number){
+        if (therapist.getMaxPatients() != number) {
 
             isChanged = true;
             therapist.setMaxPatients(number);
         }
 
-        if(!therapist.getState().equals(change)){
+        if (!therapist.getState().equals(change)) {
 
             isChanged = true;
             therapist.setState(change);
         }
 
         //Update operations
-        if(isChanged) { //not access to the db unless a parameter changed
+        if (isChanged) { //not access to the db unless a parameter changed
             service.updateTherapist(therapist);
             session.setAttribute("user", therapist);
         }

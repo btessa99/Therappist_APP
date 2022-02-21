@@ -18,14 +18,14 @@ public class LogoutController {
 
     @GetMapping("/logout")
 
-    public String logoutGet(HttpSession session){
-        service.logout(((UserDTO)session.getAttribute("user")).getUsername());
+    public String logoutGet(HttpSession session) {
+        service.logout(((UserDTO) session.getAttribute("user")).getUsername());
         session.invalidate();
         return "redirect:/";
     }
 
     @PostMapping("/logout")
-    public String logoutPost(HttpSession session){
+    public String logoutPost(HttpSession session) {
         session.invalidate();
         return "redirect:/";
     }

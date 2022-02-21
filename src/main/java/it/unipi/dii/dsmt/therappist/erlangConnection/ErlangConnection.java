@@ -23,26 +23,26 @@ public class ErlangConnection {
     private ExecutorService myExecutor;
     private boolean isUp = false;
 
-    protected void prepareGateway(String username){
+    protected void prepareGateway(String username) {
         try {
             myName = username + "_" + userNodeName;
             if (userNode != null)
                 userNode.close();
             userNode = new OtpNode(myName, applicationCookie);
-            if(myExecutor!=null)
+            if (myExecutor != null)
                 myExecutor.shutdown();
-            myExecutor= Executors.newCachedThreadPool();
-            if(receiveMessagesMailbox!=null)
+            myExecutor = Executors.newCachedThreadPool();
+            if (receiveMessagesMailbox != null)
                 receiveMessagesMailbox.close();
             receiveMessagesMailbox = userNode.createMbox(username + "_mailbox");
             receiveMessagesMailbox.registerName(receiveMessagesMailbox.getName());
             isUp = true;
-        }catch (IOException ioe){
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
     }
 
-    public Object addToExecutor(Callable task){
+    public Object addToExecutor(Callable task) {
         try {
             return myExecutor.submit(task).get();
         } catch (InterruptedException e) {
@@ -53,15 +53,15 @@ public class ErlangConnection {
         }
     }
 
-    public void stopExecutor(){
-        myName=null;
-        if(receiveMessagesMailbox!=null){
+    public void stopExecutor() {
+        myName = null;
+        if (receiveMessagesMailbox != null) {
             receiveMessagesMailbox.close();
-            receiveMessagesMailbox=null;
+            receiveMessagesMailbox = null;
         }
-        if(userNode!=null){
+        if (userNode != null) {
             userNode.close();
-            userNode=null;
+            userNode = null;
         }
 
         myExecutor.shutdown();
@@ -76,7 +76,7 @@ public class ErlangConnection {
 
     public boolean sendMessage(MessageDTO m) {
         Callable<Boolean> toRun = new SendTask(m);
-        return (boolean) (Boolean)addToExecutor(toRun);
+        return (boolean) (Boolean) addToExecutor(toRun);
     }
 
     private class SendTask implements Callable<Boolean> {
@@ -84,8 +84,8 @@ public class ErlangConnection {
         private final OtpMbox mbox;
 
 
-        SendTask(MessageDTO m){
-            toSend=m;
+        SendTask(MessageDTO m) {
+            toSend = m;
             mbox = userNode.createMbox();
         }
 
@@ -96,12 +96,12 @@ public class ErlangConnection {
             OtpErlangString sender = new OtpErlangString(toSend.getSender());
             OtpErlangString receiver = new OtpErlangString(toSend.getReceiver());
             OtpErlangString text = new OtpErlangString(toSend.getText());
-            OtpErlangTuple messageInfo= new OtpErlangTuple(new OtpErlangObject[]{timestamp, sender, receiver, text});
-            OtpErlangTuple reqMsg = new OtpErlangTuple(new OtpErlangObject[] {mbox.self(), message, messageInfo});
+            OtpErlangTuple messageInfo = new OtpErlangTuple(new OtpErlangObject[]{timestamp, sender, receiver, text});
+            OtpErlangTuple reqMsg = new OtpErlangTuple(new OtpErlangObject[]{mbox.self(), message, messageInfo});
             mbox.send(serverRegisteredName, serverNodeName, reqMsg);
 
             OtpErlangObject ack = mbox.receive();
-            if(ack==null) //timeout expired
+            if (ack == null) //timeout expired
                 return false;
 
             OtpErlangAtom ackAtom = (OtpErlangAtom) ack;
@@ -110,12 +110,12 @@ public class ErlangConnection {
     }
 
     public ArrayList<MessageDTO> initialize(UserDTO user, String chatter) {
-        if(!isUp) {
+        if (!isUp) {
             prepareGateway(user.getUsername());
             System.out.println("connector initialized");
         }
         Callable<ArrayList<MessageDTO>> toRunLogin = new LogTask(user, chatter);
-        return (ArrayList<MessageDTO>)addToExecutor(toRunLogin);
+        return (ArrayList<MessageDTO>) addToExecutor(toRunLogin);
     }
 
     private class LogTask implements Callable<ArrayList<MessageDTO>> {
@@ -123,8 +123,8 @@ public class ErlangConnection {
         private final OtpMbox mbox;
         private String chatter;
 
-        LogTask(UserDTO u, String chatter){
-            me=u;
+        LogTask(UserDTO u, String chatter) {
+            me = u;
             mbox = userNode.createMbox();
             this.chatter = chatter;
         }
@@ -141,32 +141,32 @@ public class ErlangConnection {
             System.out.println(reqMessage);
             mbox.send(serverRegisteredName, serverNodeName, reqMessage);
             System.out.println("Init sent to Pid " + serverRegisteredName);
-            OtpErlangTuple responseTuple = (OtpErlangTuple)mbox.receive();
+            OtpErlangTuple responseTuple = (OtpErlangTuple) mbox.receive();
             System.out.println(responseTuple);
             OtpErlangList response = (OtpErlangList) responseTuple.elementAt(1);
             ArrayList<MessageDTO> chat = new ArrayList<>();
-            for(OtpErlangObject o: response){
+            for (OtpErlangObject o : response) {
                 OtpErlangTuple message = (OtpErlangTuple) o;
-                String sender = ((OtpErlangString)message.elementAt(0)).stringValue();
-                String receiver = ((OtpErlangString)message.elementAt(1)).stringValue();
-                String text = ((OtpErlangString)message.elementAt(2)).stringValue();
-                long timestamp = ((OtpErlangLong)message.elementAt(3)).longValue();
+                String sender = ((OtpErlangString) message.elementAt(0)).stringValue();
+                String receiver = ((OtpErlangString) message.elementAt(1)).stringValue();
+                String text = ((OtpErlangString) message.elementAt(2)).stringValue();
+                long timestamp = ((OtpErlangLong) message.elementAt(3)).longValue();
                 MessageDTO toInsert = new MessageDTO(sender, receiver, text, timestamp);
                 System.out.println(toInsert.getText());
                 chat.add(toInsert);
             }
-            if(chat.size() > 0)
+            if (chat.size() > 0)
                 chat.sort(new Comparator<MessageDTO>() {
                     @Override
                     public int compare(MessageDTO m1, MessageDTO m2) {
-                        return (int)(m1.getTimestamp() - m2.getTimestamp());
+                        return (int) (m1.getTimestamp() - m2.getTimestamp());
                     }
                 });
             return chat;
         }
     }
 
-    public void logout(){
+    public void logout() {
         stopExecutor();
     }
 

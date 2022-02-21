@@ -19,14 +19,14 @@ public class AdminService {
 
         ArrayList<Therapist> therapists = repository.findAllByState(state);
         ArrayList<TherapistDTO> pendingTherapists = new ArrayList<>();
-        for(Therapist therapist : therapists)
+        for (Therapist therapist : therapists)
             pendingTherapists.add(UsersConverter.mapTherapistDTO(therapist));
 
 
         return pendingTherapists;
     }
 
-    public void changeStateTherapist(TherapistDTO toActivate,String state) {
+    public void changeStateTherapist(TherapistDTO toActivate, String state) {
 
         toActivate.setState(state);
         repository.save(UsersConverter.mapTherapist(toActivate));

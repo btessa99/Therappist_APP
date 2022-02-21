@@ -19,7 +19,8 @@ public abstract class UserDTO implements Serializable {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public UserDTO() {}
+    public UserDTO() {
+    }
 
     public String getFullName() {
         return fullName;

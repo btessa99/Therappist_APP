@@ -4,7 +4,6 @@ import it.unipi.dii.dsmt.therappist.dto.TherapistDTO;
 import it.unipi.dii.dsmt.therappist.service.SignInTherapistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,12 +20,12 @@ public class SignInTherapistController {
     @Autowired
     SignInTherapistService service;
 
-    @GetMapping(value="/sign-in-therapist")
-    public String show(){
+    @GetMapping(value = "/sign-in-therapist")
+    public String show() {
         return "sign-in-therapist";
     }
 
-    @PostMapping(value="/sign-in-therapist")
+    @PostMapping(value = "/sign-in-therapist")
     public String answer(ModelMap model, HttpSession session,
                          @RequestParam String username,
                          @RequestParam String email,
@@ -36,20 +35,20 @@ public class SignInTherapistController {
                          @RequestParam String pass,
                          @RequestParam String biography,
                          @RequestParam Integer number,
-                         @RequestParam("field") String[] fields){
+                         @RequestParam("field") String[] fields) {
 
         //Username and email uniqueness check
-        if(!service.checkUniqueUsername(username)){
+        if (!service.checkUniqueUsername(username)) {
 
             System.out.println("error");
-            model.put("errorMessage","Username already in use");
+            model.put("errorMessage", "Username already in use");
             return "sign-in-therapist";
         }
 
-        if(!service.checkUniqueEmail(email)){
+        if (!service.checkUniqueEmail(email)) {
 
             System.out.println("error mail ");
-            model.put("errorMessage","Email already in use");
+            model.put("errorMessage", "Email already in use");
             return "sign-in-therapist";
         }
 
@@ -78,7 +77,7 @@ public class SignInTherapistController {
         }
 
         service.addTherapist(newTherapist);
-        session.setAttribute("user",newTherapist);
+        session.setAttribute("user", newTherapist);
 
         return "waiting-page";
     }

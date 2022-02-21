@@ -23,19 +23,19 @@ public class TherapistController {
 
 
     @GetMapping(value = "/therapist-page")
-    public String getTherapist(ModelMap model,HttpSession session){
-        session.setAttribute("role","therapist");
+    public String getTherapist(ModelMap model, HttpSession session) {
+        session.setAttribute("role", "therapist");
         TherapistDTO myself = (TherapistDTO) session.getAttribute("user");
         //get patients associated to this therapist
         ArrayList<PatientDTO> myPatients = service.getMyPatients(myself.getUsername());
-        model.addAttribute("myPatients",myPatients);
+        model.addAttribute("myPatients", myPatients);
 
         return "therapist-page";
     }
 
     @PostMapping(value = "/therapist-page")
-    public String postTherapist(ModelMap model, HttpSession session, @RequestParam String patient){
-        session.setAttribute("endpoint",patient);
+    public String postTherapist(ModelMap model, HttpSession session, @RequestParam String patient) {
+        session.setAttribute("endpoint", patient);
         return "redirect:/chat-page";
     }
 

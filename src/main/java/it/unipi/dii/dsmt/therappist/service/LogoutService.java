@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class LogoutService {
 
-    public void logout(String username){
+    public void logout(String username) {
         ConnectionUtils.endConnection(username);
     }
 }

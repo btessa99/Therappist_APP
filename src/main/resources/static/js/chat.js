@@ -68,8 +68,8 @@ function send(sender, receiver) {
     message_text.textContent = content;
     let message_label = document.createElement('label');
     message_label.textContent = "Me";
-    message_label.className = "color"
-    message_div.append(message_label)
+    message_label.className = "color";
+    message_div.append(message_label);
     message_div.append(message_text);
     log.append(message_div);
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
-public class PatientDTO extends UserDTO implements Serializable{
+public class PatientDTO extends UserDTO implements Serializable {
 
     String issue;
     String therapist;

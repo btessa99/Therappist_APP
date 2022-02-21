@@ -23,7 +23,7 @@ public class SearchController {
 
     //Set the suitable therapist for the patient's issue
     @GetMapping(value = "/search-page")
-    public String getPatient(ModelMap model, HttpSession session){
+    public String getPatient(ModelMap model, HttpSession session) {
         PatientDTO patient = (PatientDTO) session.getAttribute("user");
         ArrayList<TherapistDTO> therapists = service.getAvailableTherapists(patient.getIssue());
         model.addAttribute("availableTherapists", therapists);
@@ -31,7 +31,7 @@ public class SearchController {
     }
 
     @PostMapping(value = "/search-page")
-    public String postPatient(HttpSession session, @RequestParam String therapist){
+    public String postPatient(HttpSession session, @RequestParam String therapist) {
 
         System.out.println(therapist);
         PatientDTO myself = (PatientDTO) session.getAttribute("user");
@@ -43,7 +43,7 @@ public class SearchController {
         service.updateTherapist(therapist);
 
         //update session user
-        session.setAttribute("user",myself);
+        session.setAttribute("user", myself);
 
         return "redirect:/patient-page";
     }

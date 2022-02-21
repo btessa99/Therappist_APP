@@ -13,19 +13,19 @@ public class SignInTherapistService {
     @Autowired
     TherapistRepository therapistRepository;
 
-    public void addTherapist(TherapistDTO newTherapist){
+    public void addTherapist(TherapistDTO newTherapist) {
 
         therapistRepository.save(UsersConverter.mapTherapist(newTherapist));
 
     }
 
-    public boolean checkUniqueUsername(String username){
+    public boolean checkUniqueUsername(String username) {
 
         Therapist unique = therapistRepository.findByUsername(username);
         return unique == null;
     }
 
-    public boolean checkUniqueEmail(String email){
+    public boolean checkUniqueEmail(String email) {
 
         Therapist unique = therapistRepository.findByEmail(email);
         return unique == null;

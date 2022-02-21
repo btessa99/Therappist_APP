@@ -21,15 +21,15 @@ public class ChatController {
     ChatService service;
 
     @GetMapping(value = "/chat-page")
-    public String init(ModelMap model, HttpSession session){
-        ArrayList<MessageDTO> history = service.startListener((UserDTO)session.getAttribute("user"), (String)session.getAttribute("endpoint"));
+    public String init(ModelMap model, HttpSession session) {
+        ArrayList<MessageDTO> history = service.startListener((UserDTO) session.getAttribute("user"), (String) session.getAttribute("endpoint"));
         session.setAttribute("history", history);
         System.out.println("hellou");
         return "chat-page";
     }
 
     @PostMapping(value = "/chat-page")
-    public String postInit(ModelMap model, HttpSession session){
+    public String postInit(ModelMap model, HttpSession session) {
 
         return "chat-page";
     }

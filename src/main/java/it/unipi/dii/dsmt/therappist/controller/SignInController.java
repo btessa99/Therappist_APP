@@ -24,33 +24,33 @@ public class SignInController {
     @Autowired
     SignInService service;
 
-    @GetMapping(value="/sign-in")
-    public String showForm(){
+    @GetMapping(value = "/sign-in")
+    public String showForm() {
         return "sign-in";
     }
 
-    @PostMapping(value="/sign-in")
+    @PostMapping(value = "/sign-in")
     public String seeAnswers(ModelMap model, HttpSession session, @RequestParam String full_name,
                              @RequestParam String email,
                              @RequestParam String username,
                              @RequestParam String pass,
                              @RequestParam String date_of_birth,
-                             @RequestParam String fields){
+                             @RequestParam String fields) {
 
 
         //Check if the username is already used for patients
-        if(!service.checkUniqueUsername(username)){
+        if (!service.checkUniqueUsername(username)) {
 
             System.out.println("error");
-            model.put("errorMessage","Username already in use");
+            model.put("errorMessage", "Username already in use");
             return "sign-in";
         }
 
         //check if the email is already used for patients
-        if(!service.checkUniqueEmail(email)){
+        if (!service.checkUniqueEmail(email)) {
 
             System.out.println("error mail ");
-            model.put("errorMessage","Email already in use");
+            model.put("errorMessage", "Email already in use");
             return "sign-in";
         }
 
@@ -69,7 +69,7 @@ public class SignInController {
         }
         newPatient.setIssue(fields);
 
-        session.setAttribute("user",newPatient);
+        session.setAttribute("user", newPatient);
         service.addPatient(newPatient);
 
         return "redirect:/search-page";

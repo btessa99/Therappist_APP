@@ -14,7 +14,6 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,10 +32,10 @@ public class MessageController extends TextWebSocketHandler implements Applicati
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
 
-        System.out.println( "New message " + message.getPayload());
+        System.out.println("New message " + message.getPayload());
 
-        MessageDTO tosend = gson.fromJson(message.getPayload(),MessageDTO.class);
-        if(tosend.getText().equals("My username is " + tosend.getSender())){
+        MessageDTO tosend = gson.fromJson(message.getPayload(), MessageDTO.class);
+        if (tosend.getText().equals("My username is " + tosend.getSender())) {
             sessionUsers.put(tosend.getSender(), session.getId());
             return;
         }
@@ -50,38 +49,43 @@ public class MessageController extends TextWebSocketHandler implements Applicati
 
         System.out.println("Connection established with WebSocket " + session.getId());
 
-            sessions.put( session.getId(), session );
+        sessions.put(session.getId(), session);
 
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        Iterator<String> keys = sessionUsers.keySet().iterator();
-        while(keys.hasNext()){
-            if(keys.next().equals(session.getId())) {
-                sessionUsers.remove(session.getId());
-                System.out.println("Session with " + session.getId() + " correctly closed");
+        Iterator<Map.Entry<String, String>> entries = sessionUsers.entrySet().iterator();
+        String toRemove = null;
+        while (entries.hasNext()) {
+            Map.Entry<String, String> entry = entries.next();
+            String username = entry.getKey();
+            String sessionId = entry.getValue();
+            if (sessionId.equals(session.getId())) {
+                toRemove = username;
                 break;
             }
         }
-        sessions.remove( session.getId() );
-
+        if (toRemove != null) {
+            sessionUsers.remove(toRemove);
+            sessions.remove(session.getId());
+        }
     }
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-        System.out.println( exception.getMessage() );
+        System.out.println(exception.getMessage());
     }
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
 
-        if(event instanceof MessageEvent){
+        if (event instanceof MessageEvent) {
             MessageDTO message = ((MessageEvent) event).getNewMessage();
 
             String messageText = gson.toJson(message);
             try {
-                if(sessionUsers.containsKey(message.getReceiver())){
+                if (sessionUsers.containsKey(message.getReceiver())) {
                     WebSocketSession session = sessions.get(sessionUsers.get(message.getReceiver()));
                     session.sendMessage(new TextMessage(messageText));
                 }
@@ -90,8 +94,7 @@ public class MessageController extends TextWebSocketHandler implements Applicati
             }
         }
 
-        }
-
+    }
 
 
 }

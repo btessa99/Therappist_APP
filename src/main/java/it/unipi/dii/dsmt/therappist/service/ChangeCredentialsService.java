@@ -13,7 +13,7 @@ public class ChangeCredentialsService {
     PatientRepository patientRepository;
 
     //Update a patient with modified password or issue
-    public void updatePatient(PatientDTO patient){
+    public void updatePatient(PatientDTO patient) {
         patientRepository.save(UsersConverter.mapPatient(patient));
     }
 

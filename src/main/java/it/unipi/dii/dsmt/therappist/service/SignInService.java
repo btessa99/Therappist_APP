@@ -13,26 +13,24 @@ public class SignInService {
     @Autowired
     PatientRepository patientRepository;
 
-    public void addPatient(PatientDTO newPatient){
+    public void addPatient(PatientDTO newPatient) {
 
         patientRepository.save(UsersConverter.mapPatient(newPatient));
 
     }
 
-    public boolean checkUniqueUsername(String username){
+    public boolean checkUniqueUsername(String username) {
 
         Patient unique = patientRepository.findByUsername(username);
         return unique == null;
     }
 
-    public boolean checkUniqueEmail(String email){
+    public boolean checkUniqueEmail(String email) {
 
         Patient unique = patientRepository.findByEmail(email);
         return unique == null;
 
     }
-
-
 
 
 }

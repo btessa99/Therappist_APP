@@ -20,13 +20,13 @@ public class LoginService {
     private TherapistRepository therapistRepository;
 
     //gets a patient given a username
-    public PatientDTO getPatient(String userid){
+    public PatientDTO getPatient(String userid) {
         Patient patient = patientRepository.findByUsername(userid);
         return UsersConverter.mapPatientDTO(patient);
     }
 
     //gets a therapist given a username
-    public TherapistDTO getTherapist(String userid){
+    public TherapistDTO getTherapist(String userid) {
         Therapist therapist = therapistRepository.findByUsername(userid);
         return UsersConverter.mapTherapistDTO(therapist);
     }

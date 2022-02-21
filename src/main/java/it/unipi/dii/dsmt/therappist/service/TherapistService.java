@@ -18,12 +18,12 @@ public class TherapistService {
     @Autowired
     PatientRepository repository;
 
-    public ArrayList<PatientDTO> getMyPatients(String myUsername){
+    public ArrayList<PatientDTO> getMyPatients(String myUsername) {
 
         ArrayList<Patient> patients = repository.findByTherapist(myUsername);
         ArrayList<PatientDTO> myPatients = new ArrayList<>();
 
-        for(Patient myPatient: patients)
+        for (Patient myPatient : patients)
             myPatients.add(UsersConverter.mapPatientDTO(myPatient));
 
         return myPatients;

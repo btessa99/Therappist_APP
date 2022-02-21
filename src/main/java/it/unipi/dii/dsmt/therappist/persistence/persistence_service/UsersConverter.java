@@ -8,8 +8,8 @@ import it.unipi.dii.dsmt.therappist.persistence.entities.Therapist;
 
 public class UsersConverter {
 
-    public static Patient mapPatient(PatientDTO input){
-        if(input == null)
+    public static Patient mapPatient(PatientDTO input) {
+        if (input == null)
             return null;
         Patient patient = new Patient();
         patient.setUsername(input.getUsername());
@@ -22,8 +22,8 @@ public class UsersConverter {
         return patient;
     }
 
-    public static PatientDTO mapPatientDTO(Patient input){
-        if(input == null)
+    public static PatientDTO mapPatientDTO(Patient input) {
+        if (input == null)
             return null;
         PatientDTO patient = new PatientDTO();
         patient.setUsername(input.getUsername());
@@ -36,8 +36,8 @@ public class UsersConverter {
         return patient;
     }
 
-    public static Therapist mapTherapist(TherapistDTO input){
-        if(input == null)
+    public static Therapist mapTherapist(TherapistDTO input) {
+        if (input == null)
             return null;
         Therapist therapist = new Therapist();
         therapist.setUsername(input.getUsername());
@@ -56,8 +56,8 @@ public class UsersConverter {
         return therapist;
     }
 
-    public static TherapistDTO mapTherapistDTO(Therapist input){
-        if(input == null)
+    public static TherapistDTO mapTherapistDTO(Therapist input) {
+        if (input == null)
             return null;
         TherapistDTO therapist = new TherapistDTO();
         therapist.setUsername(input.getUsername());

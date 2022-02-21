@@ -10,7 +10,7 @@ import java.util.ArrayList;
 @Service
 public class ChatService {
 
-    public ArrayList<MessageDTO> startListener(UserDTO user, String chatter){
-        return ServiceUtils.startListener(user,chatter);
+    public ArrayList<MessageDTO> startListener(UserDTO user, String chatter) {
+        return ServiceUtils.startListener(user, chatter);
     }
 }

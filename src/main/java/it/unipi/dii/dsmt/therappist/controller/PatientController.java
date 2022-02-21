@@ -27,15 +27,15 @@ public class PatientController {
     // First visit to the page: opens the chat and erlang management starts:
     // Starts the message listener for the patient
     @GetMapping(value = "/patient-page")
-    public String getPatient(ModelMap model, HttpSession session){
-        session.setAttribute("role","patient");
+    public String getPatient(ModelMap model, HttpSession session) {
+        session.setAttribute("role", "patient");
         PatientDTO myself = (PatientDTO) session.getAttribute("user");
-        session.setAttribute("endpoint",myself.getTherapist());
+        session.setAttribute("endpoint", myself.getTherapist());
         return "redirect:/chat-page";
     }
 
     @PostMapping(value = "/patient-page")
-    public String postPatient(SessionAttributeStore store, WebRequest request){
+    public String postPatient(SessionAttributeStore store, WebRequest request) {
         return "redirect:/chat-page";
     }
 

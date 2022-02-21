@@ -22,9 +22,6 @@ public class TerminateSessionController {
         UserDTO user = (UserDTO) session.getAttribute("user");
 
         ConnectionUtils.endConnection(user.getUsername());
-
-        //delete chat from mnesia as well??
-
         service.dividePatientAndTherapist(user.getUsername(), endpoint);
         return "redirect:/search-page";
 

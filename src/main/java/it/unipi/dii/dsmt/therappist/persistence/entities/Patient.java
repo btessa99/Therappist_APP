@@ -34,7 +34,8 @@ public class Patient implements Serializable {
     private String therapist;
 
 
-    public Patient(){}
+    public Patient() {
+    }
 
     public Patient(String username, String fullName, String email, String password, Date dateOfBirth, String issue, String therapist) {
         this.username = username;

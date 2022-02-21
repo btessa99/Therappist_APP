@@ -16,7 +16,7 @@ public class TerminateSessionService {
     @Autowired
     TherapistRepository therapistRepository;
 
-    public void dividePatientAndTherapist(String patientUsername,String therapistUsername){
+    public void dividePatientAndTherapist(String patientUsername, String therapistUsername) {
 
         Patient patient = patientRepository.findByUsername(patientUsername);
         patient.setTherapist(null);

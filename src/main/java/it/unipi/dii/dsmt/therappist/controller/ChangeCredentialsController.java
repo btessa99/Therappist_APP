@@ -18,7 +18,7 @@ public class ChangeCredentialsController {
     private ChangeCredentialsService service;
 
     @GetMapping(value = "/change-credentials")
-    public String getPage(){
+    public String getPage() {
         System.out.println("ciaooo");
         return "change-credentials";
     }
@@ -26,13 +26,13 @@ public class ChangeCredentialsController {
     //If the new password is submitted and matches with the confirmation field,
     //and/or the issue is modified, I update the patient either in DB and in session
     @PostMapping(value = "/change-credentials")
-    public String postPage(ModelMap model, @RequestParam String pass, @RequestParam String pass_confirm, @RequestParam String fields, HttpSession session){
+    public String postPage(ModelMap model, @RequestParam String pass, @RequestParam String pass_confirm, @RequestParam String fields, HttpSession session) {
         PatientDTO patient = (PatientDTO) session.getAttribute("user");
         boolean isChanged = false;
 
         //Password verification
-        if(!pass.equals("")){
-            if(!pass.equals(pass_confirm)){
+        if (!pass.equals("")) {
+            if (!pass.equals(pass_confirm)) {
                 model.put("errorMessage", "Password don't match");
                 return "change-credentials";
             }
@@ -40,12 +40,12 @@ public class ChangeCredentialsController {
             isChanged = true;
         }
         //New issue verification
-        if(!fields.equals(patient.getIssue())) {
+        if (!fields.equals(patient.getIssue())) {
             patient.setIssue(fields);
             isChanged = true;
         }
         //Update operations
-        if(isChanged) {
+        if (isChanged) {
             service.updatePatient(patient);
             session.setAttribute("user", patient);
         }

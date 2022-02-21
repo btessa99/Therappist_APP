@@ -26,7 +26,7 @@ public class TherapistDTO extends UserDTO implements Serializable {
         this.biography = biography;
     }
 
-    public TherapistDTO(){
+    public TherapistDTO() {
         super();
     }
 
